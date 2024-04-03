@@ -24,7 +24,6 @@ development version which can be installed from
 ``` r
 if (!require("devtools")) install.packages("devtools")
 remotes::install_github("MicTott/SpotSweeper")
-}
 ```
 
 Once accepted in [Bioconductor](http://bioconductor.org/), `SpotSweeper`
@@ -83,12 +82,11 @@ outputs the `local_outliers` in the colData of the SPE object. Selecting
 `data_output=TRUE` exports z-transformed QC metrics as well.
 
 ``` r
-
 # Identifying the mitochondrial transcripts in our SpatialExperiment.
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
 # Calculating QC metrics for each spot using scuttle
-spe<- scuttle::addPerCellQCMetrics(spe, subsets=list(Mito=is.mito))
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 colnames(colData(spe))
 #>  [1] "barcode_id"            "sample_id"             "in_tissue"            
 #>  [4] "array_row"             "array_col"             "ground_truth"         
@@ -98,27 +96,27 @@ colnames(colData(spe))
 
 # Identifying local outliers using SpotSweeper
 spe <- localOutliers(spe,
-                         metric="sum",
-                         direction="lower",
-                         log=TRUE
+    metric = "sum",
+    direction = "lower",
+    log = TRUE
 )
 
 spe <- localOutliers(spe,
-                         metric="detected",
-                         direction="lower",
-                         log=TRUE
+    metric = "detected",
+    direction = "lower",
+    log = TRUE
 )
 
 spe <- localOutliers(spe,
-                         metric="subsets_Mito_percent",
-                         direction="higher",
-                         log=FALSE
+    metric = "subsets_Mito_percent",
+    direction = "higher",
+    log = FALSE
 )
 
 # combine all outliers into "local_outliers" column
-spe$local_outliers <- as.logical(spe$sum_outliers) | 
-  as.logical(spe$detected_outliers) | 
-  as.logical(spe$subsets_Mito_percent_outliers)
+spe$local_outliers <- as.logical(spe$sum_outliers) |
+    as.logical(spe$detected_outliers) |
+    as.logical(spe$subsets_Mito_percent_outliers)
 ```
 
 We can now visualize `local_outliers` vs one of the QC metrics,
@@ -130,31 +128,39 @@ library(escheR)
 library(ggpubr)
 
 # library size
-p1 <- plotOutliers(spe, metric="sum_log2", 
-             outliers="sum_outliers", point_size=1.1) +
-  ggtitle("Library Size")
+p1 <- plotOutliers(spe,
+    metric = "sum_log2",
+    outliers = "sum_outliers", point_size = 1.1
+) +
+    ggtitle("Library Size")
 
 # unique genes
-p2 <- plotOutliers(spe, metric="detected_log2", 
-             outliers="detected_outliers", point_size=1.1) +
-  ggtitle("Unique Genes")
+p2 <- plotOutliers(spe,
+    metric = "detected_log2",
+    outliers = "detected_outliers", point_size = 1.1
+) +
+    ggtitle("Unique Genes")
 
 # mitochondrial percent
-p3 <- plotOutliers(spe, metric="subsets_Mito_percent", 
-             outliers="subsets_Mito_percent_outliers", point_size=1.1) +
-  ggtitle("Mitochondrial Percent")
+p3 <- plotOutliers(spe,
+    metric = "subsets_Mito_percent",
+    outliers = "subsets_Mito_percent_outliers", point_size = 1.1
+) +
+    ggtitle("Mitochondrial Percent")
 
 # all local outliers
-p4 <- plotOutliers(spe, metric="sum_log2", 
-             outliers="local_outliers", point_size=1.1, stroke=0.75) +
-  ggtitle("All Local Outliers")
+p4 <- plotOutliers(spe,
+    metric = "sum_log2",
+    outliers = "local_outliers", point_size = 1.1, stroke = 0.75
+) +
+    ggtitle("All Local Outliers")
 
 # plot
 plot_list <- list(p1, p2, p3, p4)
 ggarrange(
-  plotlist = plot_list,
-  ncol = 2, nrow = 2,
-  common.legend = FALSE
+    plotlist = plot_list,
+    ncol = 2, nrow = 2,
+    common.legend = FALSE
 )
 ```
 
@@ -166,7 +172,6 @@ Large artifacts can be visualized and detected by calculating the local
 variance of standard QC metrics, such as mitochondrial ratio.
 
 ``` r
-
 # load in DLPFC sample with hangnail artifact
 data(DLPFC_artifact)
 spe <- DLPFC_artifact
@@ -180,13 +185,13 @@ colnames(colData(spe))
 #> [13] "sex"                "age"                "diagnosis"         
 #> [16] "sample_id_complete" "count"              "sizeFactor"
 
-# find artifacts using 
-spe <- findArtifacts(spe, 
-                     mito_percent="expr_chrM_ratio",
-                     mito_sum="expr_chrM",
-                     n_rings=5,
-                     name="artifact"
-                    )
+# find artifacts using
+spe <- findArtifacts(spe,
+    mito_percent = "expr_chrM_ratio",
+    mito_sum = "expr_chrM",
+    n_rings = 5,
+    name = "artifact"
+)
 
 # check that "artifact" is now in colData
 colnames(colData(spe))
@@ -203,34 +208,34 @@ colnames(colData(spe))
 ```
 
 ``` r
-
 # plotting using escheR
-p1 <- make_escheR(spe) |> 
-  add_fill(var = "expr_chrM_ratio", point_size=1.25)
+p1 <- make_escheR(spe) |>
+    add_fill(var = "expr_chrM_ratio", point_size = 1.25)
 
-p2 <- make_escheR(spe) |> 
-  add_fill(var = "expr_chrM", point_size=1.25)
+p2 <- make_escheR(spe) |>
+    add_fill(var = "expr_chrM", point_size = 1.25)
 
-p3 <- make_escheR(spe) |> 
-  add_fill(var = "k18", point_size=1.25)
-  
+p3 <- make_escheR(spe) |>
+    add_fill(var = "k18", point_size = 1.25)
 
-p4 <- make_escheR(spe) |> 
-  add_fill(var = "artifact", point_size=1.25) +
-  scale_fill_manual(
-    name = "",
-    values = c(
-      "TRUE" = "red",
-      "FALSE" = "grey")
-  )
+
+p4 <- make_escheR(spe) |>
+    add_fill(var = "artifact", point_size = 1.25) +
+    scale_fill_manual(
+        name = "",
+        values = c(
+            "TRUE" = "red",
+            "FALSE" = "grey"
+        )
+    )
 #> Scale for fill is already present.
 #> Adding another scale for fill, which will replace the existing scale.
 
 plot_list <- list(p1, p2, p3, p4)
 ggarrange(
-  plotlist = plot_list,
-  ncol = 2, nrow = 2,
-  common.legend = FALSE
+    plotlist = plot_list,
+    ncol = 2, nrow = 2,
+    common.legend = FALSE
 )
 ```
 
@@ -238,12 +243,14 @@ ggarrange(
 
 ## Development tools
 
-``` r
+- Continuous code testing is possible thanks to [GitHub
+  actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)
+  through `BiocStyle::Biocpkg('biocthis')`.
+- The [documentation website](http://MicTott.github.io/SpotSweeper) is
+  automatically updated thanks to `BiocStyle::CRANpkg('pkgdown')`.
+- The code is styled automatically thanks to
+  `BiocStyle::CRANpkg('styler')`.
+- The documentation is formatted thanks to
+  `BiocStyle::CRANpkg('devtools')` and `BiocStyle::CRANpkg('roxygen2')`.
 
-* Continuous code testing is possible thanks to [GitHub actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)  through `r BiocStyle::Biocpkg('biocthis')`.
-* The [documentation website](http://MicTott.github.io/SpotSweeper) is automatically updated thanks to `r BiocStyle::CRANpkg('pkgdown')`.
-* The code is styled automatically thanks to `r BiocStyle::CRANpkg('styler')`.
-* The documentation is formatted thanks to `r BiocStyle::CRANpkg('devtools')` and `r BiocStyle::CRANpkg('roxygen2')`.
-
-This package was developed using `r BiocStyle::Biocpkg('biocthis')`.
-```
+This package was developed using `BiocStyle::Biocpkg('biocthis')`.

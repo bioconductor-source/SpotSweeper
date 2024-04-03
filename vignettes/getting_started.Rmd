@@ -18,12 +18,12 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  message = FALSE,
-  comment = "#>"
-  #fig.width = 8,
-  #fig.height = 8,
-  #fig.retina = 2
+    collapse = TRUE,
+    message = FALSE,
+    comment = "#>"
+    # fig.width = 8,
+    # fig.height = 8,
+    # fig.retina = 2
 )
 ```
 
@@ -45,7 +45,6 @@ development version which can be installed from
 ```{r 'install_dev', eval = FALSE}
 if (!require("devtools")) install.packages("devtools")
 remotes::install_github("MicTott/SpotSweeper")
-}
 ```
 
 Once accepted in [Bioconductor](http://bioconductor.org/), `SpotSweeper` will be
@@ -101,9 +100,8 @@ rownames(spe) <- rowData(spe)$gene_name
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
 # calculating QC metrics for each spot using scuttle
-spe<- scuttle::addPerCellQCMetrics(spe, subsets=list(Mito=is.mito))
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 colnames(colData(spe))
-
 ```
 
 
@@ -120,23 +118,25 @@ the raw mitochondrial percentage.
 
 ```{r example_local_outliers}
 # library size
-spe <- localOutliers(spe, 
-                     metric="sum",
-                     direction="lower", 
-                     log=TRUE)
+spe <- localOutliers(spe,
+    metric = "sum",
+    direction = "lower",
+    log = TRUE
+)
 
 # unique genes
-spe <- localOutliers(spe, 
-                     metric="detected", 
-                     direction="lower", 
-                     log=TRUE)
+spe <- localOutliers(spe,
+    metric = "detected",
+    direction = "lower",
+    log = TRUE
+)
 
 # mitochondrial percent
-spe <- localOutliers(spe, 
-                     metric="subsets_Mito_percent", 
-                     direction="higher", 
-                     log=FALSE)
-
+spe <- localOutliers(spe,
+    metric = "subsets_Mito_percent",
+    direction = "higher",
+    log = FALSE
+)
 ```
 
 The `localOutlier` function automatically outputs the results to the `colData` 
@@ -146,10 +146,9 @@ with the naming convention `X_outliers`, where `X` is the name of the input
 
 ```{r example_combine_local_outliers}
 # combine all outliers into "local_outliers" column
-spe$local_outliers <- as.logical(spe$sum_outliers) | 
-  as.logical(spe$detected_outliers) | 
-  as.logical(spe$subsets_Mito_percent_outliers)
-
+spe$local_outliers <- as.logical(spe$sum_outliers) |
+    as.logical(spe$detected_outliers) |
+    as.logical(spe$subsets_Mito_percent_outliers)
 ```
 
 ### Visualizing local outliers
@@ -166,33 +165,40 @@ library(escheR)
 library(ggpubr)
 
 # library size
-p1 <- plotOutliers(spe, metric="sum_log2", 
-             outliers="sum_outliers", point_size=1.1) +
-  ggtitle("Library Size")
+p1 <- plotOutliers(spe,
+    metric = "sum_log2",
+    outliers = "sum_outliers", point_size = 1.1
+) +
+    ggtitle("Library Size")
 
 # unique genes
-p2 <- plotOutliers(spe, metric="detected_log2", 
-             outliers="detected_outliers", point_size=1.1) +
-  ggtitle("Unique Genes")
+p2 <- plotOutliers(spe,
+    metric = "detected_log2",
+    outliers = "detected_outliers", point_size = 1.1
+) +
+    ggtitle("Unique Genes")
 
 # mitochondrial percent
-p3 <- plotOutliers(spe, metric="subsets_Mito_percent", 
-             outliers="subsets_Mito_percent_outliers", point_size=1.1) +
-  ggtitle("Mitochondrial Percent")
+p3 <- plotOutliers(spe,
+    metric = "subsets_Mito_percent",
+    outliers = "subsets_Mito_percent_outliers", point_size = 1.1
+) +
+    ggtitle("Mitochondrial Percent")
 
 # all local outliers
-p4 <- plotOutliers(spe, metric="sum_log2", 
-             outliers="local_outliers", point_size=1.1, stroke=0.75) +
-  ggtitle("All Local Outliers")
+p4 <- plotOutliers(spe,
+    metric = "sum_log2",
+    outliers = "local_outliers", point_size = 1.1, stroke = 0.75
+) +
+    ggtitle("All Local Outliers")
 
 # plot
 plot_list <- list(p1, p2, p3, p4)
 ggarrange(
-  plotlist = plot_list,
-  ncol = 2, nrow = 2,
-  common.legend = FALSE
+    plotlist = plot_list,
+    ncol = 2, nrow = 2,
+    common.legend = FALSE
 )
-
 ```
 
 
@@ -207,7 +213,6 @@ spe <- DLPFC_artifact
 
 # inspect colData before artifact detection
 colnames(colData(spe))
-
 ```
 
 
@@ -221,26 +226,32 @@ plots using `ggpubr::arrange`.
 
 ```{r artifact_QC_plots}
 # library size
-p1 <- plotOutliers(spe, metric="sum_umi", 
-             outliers=NULL, point_size=1.1) +
-  ggtitle("Library Size")
+p1 <- plotOutliers(spe,
+    metric = "sum_umi",
+    outliers = NULL, point_size = 1.1
+) +
+    ggtitle("Library Size")
 
 # unique genes
-p2 <- plotOutliers(spe, metric="sum_gene", 
-             outliers=NULL, point_size=1.1) +
-  ggtitle("Unique Genes")
+p2 <- plotOutliers(spe,
+    metric = "sum_gene",
+    outliers = NULL, point_size = 1.1
+) +
+    ggtitle("Unique Genes")
 
 # mitochondrial percent
-p3 <- plotOutliers(spe, metric="expr_chrM_ratio", 
-             outliers=NULL, point_size=1.1) +
-  ggtitle("Mitochondrial Percent")
+p3 <- plotOutliers(spe,
+    metric = "expr_chrM_ratio",
+    outliers = NULL, point_size = 1.1
+) +
+    ggtitle("Mitochondrial Percent")
 
 # plot
 plot_list <- list(p1, p2, p3)
 ggarrange(
-  plotlist = plot_list,
-  ncol = 3, nrow = 1,
-  common.legend = FALSE
+    plotlist = plot_list,
+    ncol = 3, nrow = 1,
+    common.legend = FALSE
 )
 ```
 
@@ -256,16 +267,15 @@ outputs the results to the `colData`.
 
 ```{r artifact_plot}
 # find artifacts using SpotSweeper
-spe <- findArtifacts(spe, 
-                     mito_percent="expr_chrM_ratio",
-                     mito_sum="expr_chrM",
-                     n_rings=5,
-                     name="artifact"
-                    )
+spe <- findArtifacts(spe,
+    mito_percent = "expr_chrM_ratio",
+    mito_sum = "expr_chrM",
+    n_rings = 5,
+    name = "artifact"
+)
 
 # check that "artifact" is now in colData
 colnames(colData(spe))
-
 ```
 
 
@@ -276,9 +286,11 @@ the artifacts using the `make_escheR` function and arrange these plots using
 `ggpubr::arrange`.
 
 ```{r artifact_visualization}
-plotOutliers(spe, metric="expr_chrM_ratio", 
-             outliers="artifact", point_size=1.1) +
-  ggtitle("Hangnail artifact")
+plotOutliers(spe,
+    metric = "expr_chrM_ratio",
+    outliers = "artifact", point_size = 1.1
+) +
+    ggtitle("Hangnail artifact")
 ```
 # Session information
 
