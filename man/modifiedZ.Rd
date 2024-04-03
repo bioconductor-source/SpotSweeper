@@ -23,6 +23,7 @@ is a replication of the spatialEco::outliers() package that is no longer
 available on CRAN as of October 2023.
 }
 \examples{
+
 data <- c(1, 2, 3, 4, 5, 100)
-modified_z(data)
+z_data <- modifiedZ(data)
 }

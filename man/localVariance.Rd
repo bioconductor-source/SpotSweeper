@@ -37,6 +37,8 @@ SpatialExperiment object with feature variance added to colData
 This function does calculates the local variance based on kNN.
 }
 \examples{
+
+# for more details see extended example in vignettes
 library(SpotSweeper)
 library(SpatialExperiment)
 
@@ -64,5 +66,8 @@ spe <- localVariance(spe,
     features = "subsets_Mito_percent",
     n_neighbors = 36,
     name = "local_mito_variance_k36"
-)
+    )
+
+plotOutliers(spe, metric="local_mito_variance_k36")
+
 }

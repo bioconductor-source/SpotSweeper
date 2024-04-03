@@ -57,11 +57,32 @@ spe <- spe[, !is.na(spe$ground_truth)]
 # Identifying the mitochondrial transcripts in our SpatialExperiment.
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
-# Calculating QC features for each spot using scuttle
-spe <- scuttle::addPerCellQC(spe, subsets = list(Mito = is.mito))
+# Calculating QC metrics for each spot using scuttle
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
+colnames(colData(spe))
+
+# Identifying local outliers using SpotSweeper
+spe <- localOutliers(spe,
+                     metric = "sum",
+                     direction = "lower",
+                     log = TRUE
+)
 
 spe <- localOutliers(spe,
-    metric = "detected",
-    direction = "lower"
+                     metric = "detected",
+                     direction = "lower",
+                     log = TRUE
 )
+
+spe <- localOutliers(spe,
+                     metric = "subsets_Mito_percent",
+                     direction = "higher",
+                     log = FALSE
+)
+
+# combine all outliers into "local_outliers" column
+spe$local_outliers <- as.logical(spe$sum_outliers) |
+  as.logical(spe$detected_outliers) |
+  as.logical(spe$subsets_Mito_percent_outliers)
+
 }

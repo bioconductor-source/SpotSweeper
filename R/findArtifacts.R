@@ -49,7 +49,7 @@
 #'     name = "artifact"
 #' )
 #'
-#' plotOutliers(spe, metric="subsets_Mito_ratio", outliers="artifact)
+#' plotOutliers(spe, metric="subsets_Mito_ratio", outliers="artifact")
 #'
 #' @export
 findArtifacts <- function(
