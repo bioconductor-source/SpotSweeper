@@ -36,10 +36,11 @@
 #'
 #' @export
 
-plotOutliers <- function(spe, sample_id = "sample_id",
-    sample = unique(spe$sample_id)[1], metric = "detected",
-    outliers = NULL, point_size = 2,
-    colors = c("white", "black"), stroke = 1) {
+plotOutliers <- function(
+        spe, sample_id = "sample_id",
+        sample = unique(spe$sample_id)[1], metric = "detected",
+        outliers = NULL, point_size = 2,
+        colors = c("white", "black"), stroke = 1) {
     # Subset the data to the specified sample
     spe.subset <- spe[, colData(spe)[[sample_id]] == sample]
 
@@ -49,9 +50,11 @@ plotOutliers <- function(spe, sample_id = "sample_id",
 
     # Conditionally add outliers if they are not NULL
     if (!is.null(outliers)) {
-        p <- p |> add_ground(var = outliers,
-                             stroke = stroke,
-                             point_size = point_size)
+        p <- p |> add_ground(
+            var = outliers,
+            stroke = stroke,
+            point_size = point_size
+        )
     }
 
     # Add title to the plot
@@ -73,9 +76,11 @@ plotOutliers <- function(spe, sample_id = "sample_id",
             )
         }
     } else if (length(colors) > 2) {
-        p <- p + scale_fill_gradient2(low = colors[1],
-                                      mid = colors[2],
-                                      high = colors[3]) +
+        p <- p + scale_fill_gradient2(
+            low = colors[1],
+            mid = colors[2],
+            high = colors[3]
+        ) +
             scale_y_reverse()
 
         # If outliers are not NULL, add a manual color scale for them

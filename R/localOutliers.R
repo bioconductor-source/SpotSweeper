@@ -1,7 +1,7 @@
 #' localOutliers Function
 #'
 #' This function detects local outliers in spatial transcriptomics data based on
-#'standard quality control metrics, such as library size, unique genes, and
+#' standard quality control metrics, such as library size, unique genes, and
 #' mitochondrial ratio. Local outliers are defined as spots with low/high
 #' quality metrics compared to their surrounding neighbors, based on a modified
 #' z-score statistic.
@@ -47,9 +47,10 @@
 #'     metric = "detected",
 #'     direction = "lower"
 #' )
-localOutliers <- function(spe, metric = "detected",
-    direction = "lower", n_neighbors = 36, samples = "sample_id",
-    log = TRUE, cutoff = 3) {
+localOutliers <- function(
+        spe, metric = "detected",
+        direction = "lower", n_neighbors = 36, samples = "sample_id",
+        log = TRUE, cutoff = 3) {
     # log transform specified metric
     if (log) {
         metric_log <- paste0(metric, "_log2")
@@ -85,8 +86,7 @@ localOutliers <- function(spe, metric = "detected",
         # Loop through each row in the nearest neighbor index matrix
         for (i in seq_len(nrow(dnn))) {
             dnn.idx <- dnn[i, ]
-            neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]),
-                                  ][[metric_to_use]]
+            neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
 
             mod_z_matrix[i] <- modifiedZ(neighborhood)[1]
         }

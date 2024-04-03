@@ -49,10 +49,9 @@
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
 #' )
-localVariance <- function(
-        spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
-        samples = "sample_id", log2 = FALSE,
-        name = NULL) {
+localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
+    samples = "sample_id", log2 = FALSE,
+    name = NULL) {
     # log2 transform specified features
     features_to_use <- character()
     if (log2) {
@@ -99,8 +98,7 @@ localVariance <- function(
         for (i in 1:nrow(dnn)) {
             dnn.idx <- dnn[i, ]
             for (j in seq_along(features_to_use)) {
-                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]),
-                                      ][[features_to_use[j]]]
+                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
 
                 var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
                 mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
