@@ -38,29 +38,24 @@
 #' is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 #'
 #' # Calculating QC features for each spot using scuttle
-#' spe<- scuttle::addPerCellQC(spe, subsets=list(Mito=is.mito))
+#' spe <- scuttle::addPerCellQC(spe, subsets = list(Mito = is.mito))
 #'
 # Identifying local outliers suing SpotSweepR
-#' spe<- localOutliers(spe,
-#'                     metric="detected",
-#'                     direction="lower"
-#'                     )
-localOutliers <- function(spe,
-                          metric="detected",
-                          direction="lower",
-                          n_neighbors = 36,
-                          samples = "sample_id",
-                          log = TRUE,
-                          cutoff = 3) {
-
+#' spe <- localOutliers(spe,
+#'     metric = "detected",
+#'     direction = "lower"
+#' )
+localOutliers <- function(
+        spe, metric = "detected",
+        direction = "lower", n_neighbors = 36, samples = "sample_id",
+        log = TRUE, cutoff = 3) {
     # log transform specified metric
     if (log) {
         metric_log <- paste0(metric, "_log2")
         colData(spe)[metric_log] <- log2(colData(spe)[[metric]])
         metric_to_use <- metric_log
-
     } else {
-       metric_to_use <- metric
+        metric_to_use <- metric
     }
 
     # Get a list of unique sample IDs
@@ -72,15 +67,16 @@ localOutliers <- function(spe,
     # Loop through each unique sample ID
     for (sample in unique_sample_ids) {
         # Subset the data for the current sample
-        spe_subset <- spe[ ,colData(spe)[[samples]] == sample]
+        spe_subset <- spe[, colData(spe)[[samples]] ==
+            sample]
 
         # Create a list of spatial coordinates and qc features
         spaQC <- colData(spe_subset)
 
         # Find nearest neighbors
         dnn <- BiocNeighbors::findKNN(spatialCoords(spe_subset),
-                                      k = n_neighbors,
-                                      warn.ties = FALSE)$index
+            k = n_neighbors, warn.ties = FALSE
+        )$index
 
         # Initialize a matrix to store z-scores
         mod_z_matrix <- array(NA, nrow(dnn))
@@ -88,7 +84,10 @@ localOutliers <- function(spe,
         # Loop through each row in the nearest neighbor index matrix
         for (i in seq_len(nrow(dnn))) {
             dnn.idx <- dnn[i, ]
-            mod_z_matrix[i] <- modified_z(spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]])[1]
+            mod_z_matrix[i] <- modified_z(spaQC[c(
+                i,
+                dnn.idx[dnn.idx != 0]
+            ), ][[metric_to_use]])[1]
         }
 
         # Handle non-finite values
@@ -96,11 +95,23 @@ localOutliers <- function(spe,
 
         # find outliers based on cutoff, store in colData
         metric_outliers <- paste0(metric, "_outliers")
-        spaQC[metric_outliers]  <- switch(direction,
-                              "higher" = as.factor(apply(mod_z_matrix, 1, function(x) x > cutoff)),
-                              "lower" = as.factor(apply(mod_z_matrix, 1, function(x) x < -cutoff)),
-                              "both" = as.factor(apply(mod_z_matrix, 1, function(x) x > cutoff | x < -cutoff))
-                              )
+        spaQC[metric_outliers] <- switch(direction,
+            higher = as.factor(apply(
+                mod_z_matrix,
+                1, function(x) x > cutoff
+            )),
+            lower = as.factor(apply(
+                mod_z_matrix,
+                1, function(x) x < -cutoff
+            )),
+            both = as.factor(apply(
+                mod_z_matrix,
+                1, function(x) {
+                    x > cutoff | x <
+                        -cutoff
+                }
+            ))
+        )
 
         # add z-scores to colData
         metric_z <- paste0(metric, "_z")
