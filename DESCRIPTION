@@ -33,7 +33,8 @@ Imports:
     SingleCellExperiment,
     stats,
     escheR,
-    MASS
+    MASS,
+    ggplot2
 Suggests:
     knitr,
     scuttle,
