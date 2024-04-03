@@ -12,7 +12,7 @@
 #'        values far from zero.
 #' @examples
 #' data <- c(1, 2, 3, 4, 5, 100)
-#' modified_z(data)
+#' modifiedZ(data)
 #' @export
 modifiedZ <- function(x, s = 1.4826) {
     e <- (length(x) - 1) / sqrt(length(x))

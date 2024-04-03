@@ -21,6 +21,8 @@
 #' @export localVariance
 #'
 #' @examples
+#'
+#' # for more details see extended example in vignettes
 #' library(SpotSweeper)
 #' library(SpatialExperiment)
 #'
@@ -49,9 +51,10 @@
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
 #' )
-localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
-    samples = "sample_id", log2 = FALSE,
-    name = NULL) {
+localVariance <- function(spe, n_neighbors = 36,
+                          features = c("expr_chrM_ratio"),
+                          samples = "sample_id", log2 = FALSE, name = NULL) {
+
     # log2 transform specified features
     features_to_use <- character()
     if (log2) {
