@@ -9,23 +9,17 @@ author:
   - name: Stephanie Hicks
     affiliation: *id1
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Getting Started with `SpotSweeper`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-    collapse = TRUE,
-    message = FALSE,
-    comment = "#>"
-    # fig.width = 8,
-    # fig.height = 8,
-    # fig.retina = 2
-)
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
 ```
+
 
 ## Introduction
 
