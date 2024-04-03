@@ -19,6 +19,7 @@
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom BiocNeighbors findKNN
+#' @importfrom spatialEco outliers
 #'
 #' @export localOutliers
 #'
@@ -108,7 +109,8 @@ localOutliers <- function(
             dnn.idx <- dnn[i, ]
             neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
 
-            mod_z_matrix[i] <- modifiedZ(neighborhood)[1]
+            # modified z-score
+            mod_z_matrix[i] <- spatialEco::outliers(neighborhood)[1]
         }
 
         # Handle non-finite values
