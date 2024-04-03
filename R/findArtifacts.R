@@ -38,33 +38,18 @@
 #' library(SpotSweeper)
 #' library(SpatialExperiment)
 #'
-#' # load example data
-#' spe <- STexampleData::Visium_humanDLPFC()
+#' data(DLPFC_artifact)
+#' spe <- DLPFC_artifact
 #'
-#' # change from gene id to gene names
-#' rownames(spe) <- rowData(spe)$gene_name
-#'
-#' # show column data before SpotSweepR
-#' colnames(colData(spe))
-#'
-#' # drop out-of-tissue spots
-#' spe <- spe[, spe$in_tissue == 1]
-#' spe <- spe[, !is.na(spe$ground_truth)]
-#'
-#' # Identifying the mitochondrial transcripts in our SpatialExperiment.
-#' is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
-#'
-#' # Calculating QC metrics for each spot using scuttle
-#' spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
-#' colnames(colData(spe))
-#'
-#' # find rtifacts
+#' # find artifacts
 #' spe <- findArtifacts(spe,
 #'     mito_percent = "subsets_Mito_percent",
 #'     mito_sum = "subsets_Mito_sum",
 #'     n_rings = 5,
 #'     name = "artifact"
 #' )
+#'
+#' plotOutliers(spe, metric="subsets_Mito_ratio", outliers="artifact)
 #'
 #' @export
 findArtifacts <- function(
