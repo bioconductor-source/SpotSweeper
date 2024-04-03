@@ -50,7 +50,10 @@
 #'     features = "subsets_Mito_percent",
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
-#' )
+#'     )
+#'
+#' plotOutliers(spe, metric="local_mito_variance_k36")
+#'
 localVariance <- function(spe, n_neighbors = 36,
                           features = c("expr_chrM_ratio"),
                           samples = "sample_id", log2 = FALSE, name = NULL) {
