@@ -200,7 +200,7 @@ ggarrange(
 
 ### Loading example data
 
-```{r example_artifactRemoval, eval = requireNamespace('SpotSweeper')}
+```{r example_artifactRemoval}
 # load in DLPFC sample with hangnail artifact
 data(DLPFC_artifact)
 spe <- DLPFC_artifact
