@@ -98,8 +98,11 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
         for (i in 1:nrow(dnn)) {
             dnn.idx <- dnn[i, ]
             for (j in seq_along(features_to_use)) {
-                var_matrix[i, j] <- var(spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]], na.rm = TRUE)[1]
-                mean_matrix[i, j] <- mean(spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]], na.rm = TRUE)[1]
+
+                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
+
+                var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
+                mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
             }
         }
 
@@ -111,8 +114,8 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
         for (feature_idx in seq_along(features_to_use)) {
             # Prepare data.frame for current feature
             mito_var_df <- data.frame(
-                mito_var = log2(var_matrix[, feature_idx]), # log2 variance of the current feature
-                mito_mean = log2(mean_matrix[, feature_idx]) # log2 mean of the current feature
+                mito_var = log2(var_matrix[, feature_idx]),
+                mito_mean = log2(mean_matrix[, feature_idx])
             )
 
             # Perform robust linear regression (IRLS) of variance vs mean for the current feature
@@ -122,8 +125,7 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
             resid.irls <- resid(fit.irls)
 
             # Replace original variance values with residuals for the current feature
-            # Note: You might need to back-transform the residuals if you want to maintain the original scale
-            var_matrix[, feature_idx] <- resid.irls # Back-transform if necessary
+            var_matrix[, feature_idx] <- resid.irls
         }
 
         # add local variance to spaQC dataframe
