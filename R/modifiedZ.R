@@ -10,10 +10,13 @@
 #' @param s A constant used in the MAD calculation, default is 1.4826.
 #' @return A numeric vector of standardized values. Outliers typically have
 #'        values far from zero.
-#' @examples
-#' data <- c(1, 2, 3, 4, 5, 100)
-#' modifiedZ(data)
 #' @export
+#'
+#' @examples
+#'
+#' data <- c(1, 2, 3, 4, 5, 100)
+#' z_data <- modifiedZ(data)
+
 modifiedZ <- function(x, s = 1.4826) {
     e <- (length(x) - 1) / sqrt(length(x))
 

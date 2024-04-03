@@ -1,6 +1,6 @@
 # run examples from modifiedZ() function documentation
-example(modifiedZ, echo = FALSE)
+example(modifiedZ)
 
 test_that("example data gives correct Z", {
-  # matrix??
+  expect_type(z_data, "numeric")
 })
