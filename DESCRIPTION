@@ -34,7 +34,8 @@ Imports:
     stats,
     escheR,
     MASS,
-    ggplot2
+    ggplot2,
+    spatialEco
 Suggests:
     knitr,
     BiocStyle,
