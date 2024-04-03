@@ -19,7 +19,7 @@
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom BiocNeighbors findKNN
-#' @importfrom spatialEco outliers
+#' @importFrom spatialEco outliers
 #'
 #' @export localOutliers
 #'
