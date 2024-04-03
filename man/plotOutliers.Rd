@@ -10,7 +10,7 @@ plotOutliers(
   sample = unique(spe$sample_id)[1],
   metric = "detected",
   outliers = NULL,
-  point_size = 1,
+  point_size = 2,
   colors = c("white", "black"),
   stroke = 1
 )
@@ -18,34 +18,39 @@ plotOutliers(
 \arguments{
 \item{spe}{A SpatialExperiment object containing the data to be plotted.}
 
-\item{sample_id}{A character string specifying the column name in \code{colData(spe)}
-that contains unique sample identifiers. Default is "sample_id".}
+\item{sample_id}{A character string specifying the column name in
+\code{colData(spe)} that contains unique sample identifiers.
+Default is "sample_id".}
 
 \item{sample}{A character string or numeric value specifying the sample to be
-plotted. By default, it plots the first unique sample found in \code{spe$sample_id}.}
+plotted. By default, it plots the first unique sample found in
+\code{spe$sample_id}.}
 
 \item{metric}{A character string specifying the metric to be visualized
 in the plot. This metric should be a column name in \code{colData(spe)}.}
 
-\item{outliers}{A character string specifying the column name in \code{colData(spe)}
-that indicates whether a data point is considered an outlier. Default is
-NULL.}
+\item{outliers}{A character string specifying the column name in
+\code{colData(spe)} that indicates whether a data point is considered an
+outlier. Default is NULL.}
 
 \item{colors}{A character vector specifying the colors to be used for the
-gradient scale. If length is 2, the gradient will be a single color gradient.}
+gradient scale. If length is 2, the gradient will be a single color
+gradient.}
 
 \item{stroke}{A numeric value specifying the border thickness for outlier
 points. Default is 1.}
 }
 \value{
-The function returns a plot object created by \code{make_escheR} and modified
-with additional layers for visualizing the specified metric and outliers. The
-plot is not explicitly printed by the function and should be printed by the caller.
+The function returns a plot object created by \code{make_escheR} and
+modified with additional layers for visualizing the specified metric and
+outliers. The plot is not explicitly printed by the function and should be
+printed by the caller.
 }
 \description{
-This function generates a plot for a specified sample within a SingleCellExperiment
-object, highlighting outliers based on a specified metric. The plot visualizes
-the metric of interest and indicates outliers with a distinct color.
+This function generates a plot for a specified sample within a
+SingleCellExperiment object, highlighting outliers based on a specified
+metric. The plot visualizes the metric of interest and indicates outliers
+with a distinct color.
 }
 \examples{
 plot <- plotOutliers(spe)

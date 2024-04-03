@@ -13,7 +13,7 @@ Description: Spatially-aware quality control (QC) software for both spot-level
     linearly with the number of spots and is designed to be used with
     'SpatialExperiment' objects.
 License: MIT + file LICENSE
-URL: https://github.com/MicTott/SpotSweeper, https://mictott.github.io/SpotSweeper/
+URL: https://github.com/MicTott/SpotSweeper
 BugReports: https://support.bioconductor.org/tag/SpotSweeper
 biocViews: 
     Software,
@@ -32,7 +32,6 @@ Imports:
     BiocNeighbors,
     SingleCellExperiment,
     stats,
-    BiocParallel,
     escheR,
     MASS
 Suggests:

@@ -10,7 +10,6 @@ localVariance(
   features = c("expr_chrM_ratio"),
   samples = "sample_id",
   log2 = FALSE,
-  n_cores = 1,
   name = NULL
 )
 }
@@ -28,6 +27,8 @@ calculation}
 \item{log2}{Whether to log2 transform the features}
 
 \item{name}{Name of the new column to add to colData}
+
+\item{n_cores}{Number of cores to use for parallelization}
 }
 \value{
 SpatialExperiment object with feature variance added to colData
@@ -56,12 +57,12 @@ spe <- spe[, !is.na(spe$ground_truth)]
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
 # Calculating QC metrics for each spot using scuttle
-spe<- scuttle::addPerCellQCMetrics(spe, subsets=list(Mito=is.mito))
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 colnames(colData(spe))
 
 spe <- localVariance(spe,
-                     features = "subsets_Mito_percent",
-                     n_neighbors=36,
-                     name="local_mito_variance_k36"
-                     )
+    features = "subsets_Mito_percent",
+    n_neighbors = 36,
+    name = "local_mito_variance_k36"
+)
 }

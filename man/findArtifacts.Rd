@@ -19,28 +19,37 @@ findArtifacts(
 \arguments{
 \item{spe}{A SingleCellExperiment object.}
 
-\item{mito_percent}{The column name representing the mitochondrial percent. Default is "expr_chrM_ratio".}
+\item{mito_percent}{The column name representing the mitochondrial percent.
+Default is 'expr_chrM_ratio'.}
 
-\item{mito_sum}{The column name representing sum mitochondrial expression. Default is "expr_chrM".}
+\item{mito_sum}{The column name representing sum mitochondrial expression.
+Default is 'expr_chrM'.}
 
-\item{samples}{The column name representing sample IDs. Default is "sample_id".}
+\item{samples}{The column name representing sample IDs. Default is
+'sample_id'.}
 
-\item{n_rings}{The number of rings for local mito variance calculation. Default is 5.}
+\item{n_rings}{The number of rings for local mito variance calculation.
+Default is 5.}
 
 \item{n_cores}{Number of cores to use for parallel processing. Default is 1.}
 
-\item{log2}{Logical, indicating whether to log2 transform specified features. Default is TRUE.}
+\item{log2}{Logical, indicating whether to log2 transform specified features.
+Default is TRUE.}
 
-\item{name}{Prefix for the local variance column names. Default is "artifact".}
+\item{name}{Prefix for the local variance column names. Default is
+'artifact'.}
 
-\item{var_output}{Logical, indicating whether to include local variances in the output. Default is TRUE.}
+\item{var_output}{Logical, indicating whether to include local variances in
+the output. Default is TRUE.}
 }
 \value{
-Returns the modified SingleCellExperiment object with artifact annotations.
+Returns the modified SingleCellExperiment object with artifact
+annotations.
 }
 \description{
-This function identifies and annotates potential artifacts in spatial transcriptomics data.
-Artifacts are detected based on local mito variance, and the results are added to the original
+This function identifies and annotates potential artifacts in spatial
+transcriptomics data. Artifacts are detected based on local mito variance,
+and the results are added to the original
 SpatialExperiment (sce) object.
 }
 \examples{
@@ -64,16 +73,16 @@ spe <- spe[, !is.na(spe$ground_truth)]
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
 # Calculating QC metrics for each spot using scuttle
-spe<- scuttle::addPerCellQCMetrics(spe, subsets=list(Mito=is.mito))
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 colnames(colData(spe))
 
 # find rtifacts
 spe <- findArtifacts(spe,
-                     mito_percent="subsets_Mito_percent",
-                     mito_sum="subsets_Mito_sum",
-                     n_rings=5,
-                     name="artifact"
-                   )
+    mito_percent = "subsets_Mito_percent",
+    mito_sum = "subsets_Mito_sum",
+    n_rings = 5,
+    name = "artifact"
+)
 
 }
 \seealso{

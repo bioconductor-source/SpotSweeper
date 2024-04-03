@@ -25,7 +25,8 @@ localOutliers(
 
 \item{samples}{Column name in colData to use for sample IDs}
 
-\item{log}{Logical indicating whether to log2 transform the features (default is TRUE)}
+\item{log}{Logical indicating whether to log2 transform the features
+(default is TRUE)}
 
 \item{cutoff}{Cutoff for outlier detection (default is 3)}
 }
@@ -33,10 +34,11 @@ localOutliers(
 SpatialExperiment object with updated colData containing outputs
 }
 \description{
-This function detects local outliers in spatial transcriptomics data based on standard
-quality control metrics, such as library size, unique genes, and mitochondrial ratio.
-Local outliers are defined as spots with low/high quality metrics compared to their
-surrounding neighbors, based on a modified z-score statistic.
+This function detects local outliers in spatial transcriptomics data based on
+standard quality control metrics, such as library size, unique genes, and
+mitochondrial ratio. Local outliers are defined as spots with low/high
+quality metrics compared to their surrounding neighbors, based on a modified
+z-score statistic.
 }
 \examples{
 library(SpotSweeper)
@@ -56,10 +58,10 @@ spe <- spe[, !is.na(spe$ground_truth)]
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
 # Calculating QC features for each spot using scuttle
-spe<- scuttle::addPerCellQC(spe, subsets=list(Mito=is.mito))
+spe <- scuttle::addPerCellQC(spe, subsets = list(Mito = is.mito))
 
-spe<- localOutliers(spe,
-                    metric="detected",
-                    direction="lower"
-                    )
+spe <- localOutliers(spe,
+    metric = "detected",
+    direction = "lower"
+)
 }
