@@ -24,7 +24,7 @@ repository](https://github.com/MicTott/SpotSweeper/issues).
 To find more information, please visit the [documentation
 website](http://MicTott.github.io/SpotSweeper).
 
-<img src="./images/schematic.png" width="100%" />
+<img src="./man/figures/schematic.png" width="100%" />
 
 ## Installation instructions
 
