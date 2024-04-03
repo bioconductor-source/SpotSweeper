@@ -49,9 +49,10 @@
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
 #' )
-localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
-    samples = "sample_id", log2 = FALSE,
-    name = NULL) {
+localVariance <- function(
+        spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
+        samples = "sample_id", log2 = FALSE,
+        name = NULL) {
     # log2 transform specified features
     features_to_use <- character()
     if (log2) {
@@ -98,8 +99,8 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
         for (i in 1:nrow(dnn)) {
             dnn.idx <- dnn[i, ]
             for (j in seq_along(features_to_use)) {
-
-                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
+                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]),
+                                      ][[features_to_use[j]]]
 
                 var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
                 mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
@@ -110,7 +111,7 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
         var_matrix[!is.finite(var_matrix)] <- 0
         mean_matrix[!is.finite(mean_matrix)] <- 0
 
-        # ==== If remove.bias == TRUE, regress out mean-variance bias for each feature ====
+        # == Regress out mean-variance bias ==
         for (feature_idx in seq_along(features_to_use)) {
             # Prepare data.frame for current feature
             mito_var_df <- data.frame(
@@ -118,13 +119,13 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
                 mito_mean = log2(mean_matrix[, feature_idx])
             )
 
-            # Perform robust linear regression (IRLS) of variance vs mean for the current feature
+            # Perform robust linear regression (IRLS) of variance vs mean
             fit.irls <- MASS::rlm(mito_var ~ mito_mean, data = mito_var_df)
 
-            # Get residuals and update the variance matrix for the current feature
+            # Get residuals and update the variance matrix
             resid.irls <- resid(fit.irls)
 
-            # Replace original variance values with residuals for the current feature
+            # Replace original variance values with residuals
             var_matrix[, feature_idx] <- resid.irls
         }
 

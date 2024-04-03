@@ -1,20 +1,29 @@
 #' Identify and annotate artifacts in spatial transcriptomics data
 #'
-#' This function identifies and annotates potential artifacts in spatial transcriptomics data.
-#' Artifacts are detected based on local mito variance, and the results are added to the original
+#' This function identifies and annotates potential artifacts in spatial
+#' transcriptomics data. Artifacts are detected based on local mito variance,
+#' and the results are added to the original
 #' SpatialExperiment (sce) object.
 #'
 #' @param spe A SingleCellExperiment object.
-#' @param mito_percent The column name representing the mitochondrial percent. Default is 'expr_chrM_ratio'.
-#' @param mito_sum The column name representing sum mitochondrial expression. Default is 'expr_chrM'.
-#' @param samples The column name representing sample IDs. Default is 'sample_id'.
-#' @param n_rings The number of rings for local mito variance calculation. Default is 5.
+#' @param mito_percent The column name representing the mitochondrial percent.
+#' Default is 'expr_chrM_ratio'.
+#' @param mito_sum The column name representing sum mitochondrial expression.
+#' Default is 'expr_chrM'.
+#' @param samples The column name representing sample IDs. Default is
+#' 'sample_id'.
+#' @param n_rings The number of rings for local mito variance calculation.
+#' Default is 5.
 #' @param n_cores Number of cores to use for parallel processing. Default is 1.
-#' @param log2 Logical, indicating whether to log2 transform specified features. Default is TRUE.
-#' @param name Prefix for the local variance column names. Default is 'artifact'.
-#' @param var_output Logical, indicating whether to include local variances in the output. Default is TRUE.
+#' @param log2 Logical, indicating whether to log2 transform specified features.
+#' Default is TRUE.
+#' @param name Prefix for the local variance column names. Default is
+#' 'artifact'.
+#' @param var_output Logical, indicating whether to include local variances in
+#' the output. Default is TRUE.
 #'
-#' @return Returns the modified SingleCellExperiment object with artifact annotations.
+#' @return Returns the modified SingleCellExperiment object with artifact
+#' annotations.
 #'
 #' @seealso
 #' \code{\link{localVariance}}

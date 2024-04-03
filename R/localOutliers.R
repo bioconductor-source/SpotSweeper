@@ -1,16 +1,18 @@
 #' localOutliers Function
 #'
-#' This function detects local outliers in spatial transcriptomics data based on standard
-#' quality control metrics, such as library size, unique genes, and mitochondrial ratio.
-#' Local outliers are defined as spots with low/high quality metrics compared to their
-#' surrounding neighbors, based on a modified z-score statistic.
+#' This function detects local outliers in spatial transcriptomics data based on
+#'standard quality control metrics, such as library size, unique genes, and
+#' mitochondrial ratio. Local outliers are defined as spots with low/high
+#' quality metrics compared to their surrounding neighbors, based on a modified
+#' z-score statistic.
 #'
 #' @param spe SpatialExperiment object
 #' @param metric colData QC metric to use for outlier detection
 #' @param direction Direction of outlier detection (higher, lower, or both)
 #' @param n_neighbors Number of nearest neighbors to use for outlier detection
 #' @param samples Column name in colData to use for sample IDs
-#' @param log Logical indicating whether to log2 transform the features (default is TRUE)
+#' @param log Logical indicating whether to log2 transform the features
+#' (default is TRUE)
 #' @param cutoff Cutoff for outlier detection (default is 3)
 #'
 #' @return SpatialExperiment object with updated colData containing outputs
@@ -45,10 +47,9 @@
 #'     metric = "detected",
 #'     direction = "lower"
 #' )
-localOutliers <- function(
-        spe, metric = "detected",
-        direction = "lower", n_neighbors = 36, samples = "sample_id",
-        log = TRUE, cutoff = 3) {
+localOutliers <- function(spe, metric = "detected",
+    direction = "lower", n_neighbors = 36, samples = "sample_id",
+    log = TRUE, cutoff = 3) {
     # log transform specified metric
     if (log) {
         metric_log <- paste0(metric, "_log2")
@@ -84,7 +85,9 @@ localOutliers <- function(
         # Loop through each row in the nearest neighbor index matrix
         for (i in seq_len(nrow(dnn))) {
             dnn.idx <- dnn[i, ]
-            neighborhood <- spaQC[c(i,dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
+            neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]),
+                                  ][[metric_to_use]]
+
             mod_z_matrix[i] <- modifiedZ(neighborhood)[1]
         }
 
