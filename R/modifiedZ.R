@@ -14,7 +14,7 @@
 #' data <- c(1, 2, 3, 4, 5, 100)
 #' modified_z(data)
 #' @export
-modified_z <- function(x, s = 1.4826) {
+modifiedZ <- function(x, s = 1.4826) {
     e <- (length(x) - 1) / sqrt(length(x))
 
     mad <- function(x, center = stats::median(x), constant = s, low = FALSE,

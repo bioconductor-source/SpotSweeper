@@ -85,7 +85,7 @@ localOutliers <- function(
         for (i in seq_len(nrow(dnn))) {
             dnn.idx <- dnn[i, ]
             neighborhood <- spaQC[c(i,dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
-            mod_z_matrix[i] <- modified_z(neighborhood)[1]
+            mod_z_matrix[i] <- modifiedZ(neighborhood)[1]
         }
 
         # Handle non-finite values
