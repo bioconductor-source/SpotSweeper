@@ -70,7 +70,7 @@
 findArtifacts <- function(
         spe, mito_percent = "expr_chrM_ratio",
         mito_sum = "expr_chrM", samples = "sample_id", n_rings = 5,
-        n_cores = 1, log2 = TRUE, name = "artifact", var_output = TRUE) {
+         log2 = TRUE, name = "artifact", var_output = TRUE) {
     # log2 transform specified features
     features <- c(mito_percent, mito_sum)
     features_to_use <- character()
@@ -104,7 +104,7 @@ findArtifacts <- function(
             # get local variance of mito ratio
             spe.temp <- localVariance(spe.temp,
                 features = mito_percent,
-                n_neighbors = n_neighbors, n_cores = n_cores,
+                n_neighbors = n_neighbors,
                 name = tmp.name
             )
 
