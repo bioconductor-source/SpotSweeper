@@ -16,7 +16,6 @@
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom BiocNeighbors findKNN
-#' @importFrom BiocParallel MulticoreParam
 #' @importFrom MASS rlm
 #'
 #' @export localVariance
@@ -51,7 +50,7 @@
 #'                      name="local_mito_variance_k36"
 #'                      )
 localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio"),
-                          samples = "sample_id", log2 = FALSE, n_cores = 1,
+                          samples = "sample_id", log2 = FALSE,
                           name=NULL) {
 
   # log2 transform specified features
@@ -83,11 +82,9 @@ localVariance <- function(spe, n_neighbors = 36, features = c("expr_chrM_ratio")
     spaQC$coords <- spatialCoords(spe_subset)
 
     # Find nearest neighbors
-    suppressWarnings(
       dnn <- BiocNeighbors::findKNN(spatialCoords(spe_subset),
                                     k = n_neighbors,
-                                    BPPARAM=MulticoreParam(n_cores))$index
-    )
+                                    warn.ties = FALSE)$index
 
     #  === Get local variance ===
     # Initialize a matrix to store variance for each feature
