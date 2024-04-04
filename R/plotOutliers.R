@@ -22,6 +22,8 @@
 #'   gradient.
 #' @param stroke A numeric value specifying the border thickness for outlier
 #'   points. Default is 1.
+#' @param point_size A numeric value specifying the size of the points in the
+#'  plot. Default is 2.
 #'
 #' @return The function returns a plot object created by `make_escheR` and
 #'   modified with additional layers for visualizing the specified metric and

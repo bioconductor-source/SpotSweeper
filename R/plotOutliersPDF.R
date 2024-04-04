@@ -23,7 +23,9 @@
 #' @param height A numeric value indicating the height of the plot. Default
 #'   is 5.
 #' @param fname A character string specifying the path and name of the output
-#' PDF file.
+#'  PDF file.
+#' @param point_size A numeric value specifying the size of the points in the
+#'  plot. Default is 2.
 #'
 #' @return ggplot object if specified. Generates a plot otherwise.
 #'
