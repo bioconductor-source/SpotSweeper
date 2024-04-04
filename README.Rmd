@@ -18,6 +18,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/MicTott/SpotSweeper/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MicTott/SpotSweeper/actions/workflows/R-CMD-check.yaml)
+[![Bioc release status](http://www.bioconductor.org/shields/build/release/bioc/SpotSweeper.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/SpotSweeper)
+[![Bioc devel status](http://www.bioconductor.org/shields/build/devel/bioc/SpotSweeper.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/SpotSweeper)
+[![Bioc downloads rank](https://bioconductor.org/shields/downloads/release/SpotSweeper.svg)](http://bioconductor.org/packages/stats/bioc/SpotSweeper/)
+[![Bioc support](https://bioconductor.org/shields/posts/SpotSweeper.svg)](https://support.bioconductor.org/tag/SpotSweeper)
+[![Bioc history](https://bioconductor.org/shields/years-in-bioc/SpotSweeper.svg)](https://bioconductor.org/packages/release/bioc/html/SpotSweeper.html#since)
+[![Bioc last commit](https://bioconductor.org/shields/lastcommit/devel/bioc/SpotSweeper.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/SpotSweeper/)
+[![Bioc dependencies](https://bioconductor.org/shields/dependencies/release/SpotSweeper.svg)](https://bioconductor.org/packages/release/bioc/html/SpotSweeper.html#since)
 <!-- badges: end -->
 
 `SpotSweeper` is a package developed for spatially-aware quality control (QC) methods for the detection, visualization, and removal of both local outliers and large artifacts in spot-based spatial transcriptomics data, such as 10x Genomics `Visium`, using standard QC metrics. 
