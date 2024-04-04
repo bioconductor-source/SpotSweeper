@@ -36,6 +36,7 @@
 #' @examples
 #' library(SpotSweeper)
 #' library(SpatialExperiment)
+#' library(escheR)
 #'
 #' data(DLPFC_artifact)
 #' spe <- DLPFC_artifact
