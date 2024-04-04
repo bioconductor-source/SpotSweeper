@@ -32,7 +32,7 @@
 #'
 #' @importFrom escheR make_escheR add_fill add_ground
 #' @importFrom ggplot2 ggtitle scale_fill_gradient scale_y_reverse
-#' @importFrom ggplot2 scale_color_manual scale_fill_gradient2
+#' @importFrom ggplot2 scale_color_manual scale_fill_gradient2 coord_fixed
 #'
 #'
 #' @examples

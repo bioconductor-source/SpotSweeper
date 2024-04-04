@@ -7,7 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/MicTott/SpotSweeper/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MicTott/SpotSweeper/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml/badge.svg)](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml)
+[![codecov](https://codecov.io/gh/MicTott/SpotSweeper/graph/badge.svg?token=M1MUJN7VS6)](https://codecov.io/gh/MicTott/SpotSweeper)
 <!-- badges: end -->
 
 `SpotSweeper` is a package developed for spatially-aware quality control
