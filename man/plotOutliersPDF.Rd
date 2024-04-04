@@ -37,6 +37,9 @@ gradient scale. If length is 2, the gradient will be a single color gradient}
 \item{stroke}{A numeric value specifying the border thickness for outlier
 points. Default is 1.}
 
+\item{point_size}{A numeric value specifying the size of the points in the
+plot. Default is 2.}
+
 \item{width}{A numeric value indicating the width of the plot. Default
 is 5.}
 

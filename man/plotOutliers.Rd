@@ -33,6 +33,9 @@ in the plot. This metric should be a column name in \code{colData(spe)}.}
 \code{colData(spe)} that indicates whether a data point is considered an
 outlier. Default is NULL.}
 
+\item{point_size}{A numeric value specifying the size of the points in the
+plot. Default is 2.}
+
 \item{colors}{A character vector specifying the colors to be used for the
 gradient scale. If length is 2, the gradient will be a single color
 gradient.}

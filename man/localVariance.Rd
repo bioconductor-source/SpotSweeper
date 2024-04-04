@@ -27,8 +27,6 @@ calculation}
 \item{log2}{Whether to log2 transform the features}
 
 \item{name}{Name of the new column to add to colData}
-
-\item{n_cores}{Number of cores to use for parallelization}
 }
 \value{
 SpatialExperiment object with feature variance added to colData

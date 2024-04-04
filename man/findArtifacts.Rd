@@ -38,8 +38,6 @@ Default is TRUE.}
 
 \item{var_output}{Logical, indicating whether to include local variances in
 the output. Default is TRUE.}
-
-\item{n_cores}{Number of cores to use for parallel processing. Default is 1.}
 }
 \value{
 Returns the modified SingleCellExperiment object with artifact
@@ -60,8 +58,8 @@ spe <- DLPFC_artifact
 
 # find artifacts
 spe <- findArtifacts(spe,
-    mito_percent = "subsets_Mito_percent",
-    mito_sum = "subsets_Mito_sum",
+    mito_percent = "expr_chrM_ratio",
+    mito_sum = "expr_chrM",
     n_rings = 5,
     name = "artifact"
 )

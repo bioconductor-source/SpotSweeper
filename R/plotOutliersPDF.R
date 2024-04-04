@@ -30,6 +30,7 @@
 #' @return ggplot object if specified. Generates a plot otherwise.
 #'
 #' @importFrom escheR make_escheR add_fill add_ground
+#' @importFrom grDevices dev.off pdf
 #'
 #' @examples
 #' plotOutliersPDF(spe, fname = "outliers_visualization.pdf")
