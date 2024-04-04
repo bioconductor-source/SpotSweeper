@@ -60,11 +60,21 @@ findArtifacts <- function(
     features <- c(mito_percent, mito_sum)
     features_to_use <- character()
     if (log2) {
-        for (feature in features) {
-            feature_log2 <- paste0(feature, "_log2")
-            colData(spe)[feature_log2] <- log2(colData(spe)[[feature]])
-            features_to_use <- c(features_to_use, feature_log2)
-        }
+        # for (feature in features) {
+        #     feature_log2 <- paste0(feature, "_log2")
+        #     colData(spe)[feature_log2] <- log2(colData(spe)[[feature]])
+        #     features_to_use <- c(features_to_use, feature_log2)
+        # }
+      log_mat <- apply(
+        colData(spe)[, features],
+        MARGIN = 2,
+        FUN = log2
+      )
+      colnames(log_mat) <- paste0(colnames(log_mat), "_log2")
+      # Merge to spe
+      colData(spe)[colnames(log_mat)] <- log_mat
+      features_to_use <- colnames(log_mat)
+      
     } else {
         features_to_use <- features
     }
@@ -80,23 +90,43 @@ findArtifacts <- function(
         spe.temp <- spe[, colData(spe)[[samples]] == sample]
 
         # ======= Calculate local mito variance ========
-        var_matrix <- c()
-        for (i in seq_len(n_rings)) {
-            # ==== local mito variance ==== get n neighbors for i rings
+        
+        var_mat <- sapply(
+          seq_len(n_rings),
+          FUN = function(i){
             n_neighbors <- 3 * i * (i + 1)
             tmp.name <- paste0("k", n_neighbors)
+            
+                spe.temp <- localVariance(spe.temp,
+                    features = mito_percent,
+                    n_neighbors = n_neighbors,
+                    name = tmp.name
+                )
 
-            # get local variance of mito ratio
-            spe.temp <- localVariance(spe.temp,
-                features = mito_percent,
-                n_neighbors = n_neighbors,
-                name = tmp.name
-            )
+                colData(spe.temp)[[tmp.name]]
+                # # add to var_matrix
+                # var_matrix <- cbind(var_matrix, colData(spe.temp)[[tmp.name]])
+          }
+        )
+        
+        # var_matrix <- c()
+        # for (i in seq_len(n_rings)) {
+        #     # ==== local mito variance ==== get n neighbors for i rings
+        #     n_neighbors <- 3 * i * (i + 1)
+        #     tmp.name <- paste0("k", n_neighbors)
+        # 
+        #     # get local variance of mito ratio
+        #     spe.temp <- localVariance(spe.temp,
+        #         features = mito_percent,
+        #         n_neighbors = n_neighbors,
+        #         name = tmp.name
+        #     )
+        # 
+        #     # add to var_matrix
+        #     var_matrix <- cbind(var_matrix, colData(spe.temp)[[tmp.name]])
+        # }
 
-            # add to var_matrix
-            var_matrix <- cbind(var_matrix, colData(spe.temp)[[tmp.name]])
-        }
-
+        # browser()
 
         # ========== PCA and clustering ========== add mito and mito_percent to
         # var dataframe
