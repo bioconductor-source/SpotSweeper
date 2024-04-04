@@ -9,7 +9,6 @@
 #' @param features Features to use for variance calculation
 #' @param samples Column in colData to use for sample ID
 #' @param log2 Whether to log2 transform the features
-#' @param n_cores Number of cores to use for parallelization
 #' @param name Name of the new column to add to colData
 #'
 #' @return SpatialExperiment object with feature variance added to colData

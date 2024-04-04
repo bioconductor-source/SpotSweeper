@@ -14,7 +14,6 @@
 #' 'sample_id'.
 #' @param n_rings The number of rings for local mito variance calculation.
 #' Default is 5.
-#' @param n_cores Number of cores to use for parallel processing. Default is 1.
 #' @param log2 Logical, indicating whether to log2 transform specified features.
 #' Default is TRUE.
 #' @param name Prefix for the local variance column names. Default is
