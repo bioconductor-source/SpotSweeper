@@ -8,7 +8,7 @@
 #'        calculation
 #' @param features Features to use for variance calculation
 #' @param samples Column in colData to use for sample ID
-#' @param log2 Whether to log2 transform the features
+#' @param log Whether to log1p transform the features
 #' @param name Name of the new column to add to colData
 #'
 #' @return SpatialExperiment object with feature variance added to colData
@@ -61,9 +61,9 @@ localVariance <- function(spe, n_neighbors = 36,
     features_to_use <- character()
     if (log2) {
         for (feature in features) {
-            feature_log2 <- paste0(feature, "_log2")
-            colData(spe)[feature_log2] <- log2(colData(spe)[[feature]])
-            features_to_use <- c(features_to_use, feature_log2)
+            feature_log2 <- paste0(feature, "_log")
+            colData(spe)[feature_log] <- log1p(colData(spe)[[feature]])
+            features_to_use <- c(features_to_use, feature_log)
         }
     } else {
         features_to_use <- features

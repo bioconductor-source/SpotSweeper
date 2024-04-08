@@ -35,7 +35,8 @@ Imports:
     escheR,
     MASS,
     ggplot2,
-    spatialEco
+    spatialEco,
+    grDevices
 Suggests:
     knitr,
     BiocStyle,

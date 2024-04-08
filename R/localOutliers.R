@@ -11,7 +11,7 @@
 #' @param direction Direction of outlier detection (higher, lower, or both)
 #' @param n_neighbors Number of nearest neighbors to use for outlier detection
 #' @param samples Column name in colData to use for sample IDs
-#' @param log Logical indicating whether to log2 transform the features
+#' @param log Logical indicating whether to log1p transform the features
 #' (default is TRUE)
 #' @param cutoff Cutoff for outlier detection (default is 3)
 #'
@@ -74,8 +74,8 @@ localOutliers <- function(
         log = TRUE, cutoff = 3) {
     # log transform specified metric
     if (log) {
-        metric_log <- paste0(metric, "_log2")
-        colData(spe)[metric_log] <- log2(colData(spe)[[metric]])
+        metric_log <- paste0(metric, "_log")
+        colData(spe)[metric_log] <- log1p(colData(spe)[[metric]])
         metric_to_use <- metric_log
     } else {
         metric_to_use <- metric
@@ -112,9 +112,6 @@ localOutliers <- function(
             # modified z-score
             mod_z_matrix[i] <- spatialEco::outliers(neighborhood)[1]
         }
-
-        # Handle non-finite values
-        mod_z_matrix[!is.finite(mod_z_matrix)] <- 0
 
         # find outliers based on cutoff, store in colData
         metric_outliers <- paste0(metric, "_outliers")

@@ -25,7 +25,7 @@ localOutliers(
 
 \item{samples}{Column name in colData to use for sample IDs}
 
-\item{log}{Logical indicating whether to log2 transform the features
+\item{log}{Logical indicating whether to log1p transform the features
 (default is TRUE)}
 
 \item{cutoff}{Cutoff for outlier detection (default is 3)}
