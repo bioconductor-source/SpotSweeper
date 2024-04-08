@@ -65,11 +65,6 @@ spe <- localVariance(spe,
     n_neighbors = 36,
     name = "local_mito_variance_k36"
     )
-    
-spe2 <- localVariance(spe,
-    features = c("subsets_Mito_percent", "total"),
-    n_neighbors = 36
-    )
 
 plotOutliers(spe, metric="local_mito_variance_k36")
 

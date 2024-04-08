@@ -84,9 +84,8 @@ localOutliers <- function(
     # Get a list of unique sample IDs
     unique_sample_ids <- unique(colData(spe)[[samples]])
 
-    # Initialize named list to store each spaQC dataframe
-    # spaQC_list <- vector("list", length(unique_sample_ids))
-    spaQC_list <- sapply(unique_sample_ids, FUN = function(x) NULL)
+    # Initialize list to store each spaQC dataframe
+    spaQC_list <- vector("list", length(unique_sample_ids))
 
     # Loop through each unique sample ID
     for (sample in unique_sample_ids) {
@@ -102,46 +101,20 @@ localOutliers <- function(
             k = n_neighbors, warn.ties = FALSE
         )$index
 
-        dnn_aug <- cbind(
-          seq_len(nrow(dnn)), # Index of the center spot
-          dnn
-          )
-        mod_z_matrix <- apply(
-          dnn_aug, MARGIN = 1,
-          FUN = function(.idx, spaQC, metric_to_use ){
-            # browser()
-            .idx <- .idx[.idx!=0]
-            neighborhood <- spaQC[.idx, metric_to_use] |> as.matrix()
-            return(
-              spatialEco::outliers(neighborhood)[1] # The spot among neighbors
-            )
-          },
-          spaQC = spaQC,
-          metric_to_use = metric_to_use
-        )
-        
-        # browser()
         # Initialize a matrix to store z-scores
-        # mod_z_matrix <- array(NA, nrow(dnn))
+        mod_z_matrix <- array(NA, nrow(dnn))
 
         # Loop through each row in the nearest neighbor index matrix
-        # for (i in seq_len(nrow(dnn))) {
-        #     dnn.idx <- dnn[i, ]
-        #     neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
-        # 
-        #     # modified z-score
-        #     mod_z_matrix[i] <- spatialEco::outliers(neighborhood)[1]
-        # }
+        for (i in seq_len(nrow(dnn))) {
+            dnn.idx <- dnn[i, ]
+            neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
 
-        # Handle non-finite values
-        if(any(!is.finite(mod_z_matrix))){
-          warning(
-            sample_id,
-            " contains infinite value mod_z_matrix. Forcing to be 0s."
-          )
-          mod_z_matrix[!is.finite(mod_z_matrix)] <- 0
+            # modified z-score
+            mod_z_matrix[i] <- spatialEco::outliers(neighborhood)[1]
         }
 
+        # Handle non-finite values
+        mod_z_matrix[!is.finite(mod_z_matrix)] <- 0
 
         # find outliers based on cutoff, store in colData
         metric_outliers <- paste0(metric, "_outliers")
