@@ -159,29 +159,29 @@ library(escheR)
 library(ggpubr)
 
 # library size
-p1 <- plotOutliers(spe,
-    metric = "sum_log2",
+p1 <- plotQC(spe,
+    metric = "sum_log",
     outliers = "sum_outliers", point_size = 1.1
 ) +
     ggtitle("Library Size")
 
 # unique genes
-p2 <- plotOutliers(spe,
-    metric = "detected_log2",
+p2 <- plotQC(spe,
+    metric = "detected_log",
     outliers = "detected_outliers", point_size = 1.1
 ) +
     ggtitle("Unique Genes")
 
 # mitochondrial percent
-p3 <- plotOutliers(spe,
+p3 <- plotQC(spe,
     metric = "subsets_Mito_percent",
     outliers = "subsets_Mito_percent_outliers", point_size = 1.1
 ) +
     ggtitle("Mitochondrial Percent")
 
 # all local outliers
-p4 <- plotOutliers(spe,
-    metric = "sum_log2",
+p4 <- plotQC(spe,
+    metric = "sum_log",
     outliers = "local_outliers", point_size = 1.1, stroke = 0.75
 ) +
     ggtitle("All Local Outliers")
@@ -214,27 +214,27 @@ colnames(colData(spe))
 
 Technical artifacts can commonly be visualized by standard QC metrics, including
 library size, unique genes, or mitochondrial percentage. We can first visualize
-the technical artifacts using the `plotOutliers` function. This function plots 
+the technical artifacts using the `plotQC` function. This function plots 
 the Visium spots with the specified QC metric.We'll then again arrange these 
 plots using `ggpubr::arrange`.
 
 ```{r artifact_QC_plots}
 # library size
-p1 <- plotOutliers(spe,
+p1 <- plotQC(spe,
     metric = "sum_umi",
     outliers = NULL, point_size = 1.1
 ) +
     ggtitle("Library Size")
 
 # unique genes
-p2 <- plotOutliers(spe,
+p2 <- plotQC(spe,
     metric = "sum_gene",
     outliers = NULL, point_size = 1.1
 ) +
     ggtitle("Unique Genes")
 
 # mitochondrial percent
-p3 <- plotOutliers(spe,
+p3 <- plotQC(spe,
     metric = "expr_chrM_ratio",
     outliers = NULL, point_size = 1.1
 ) +
@@ -276,11 +276,11 @@ colnames(colData(spe))
 ### Visualizing artifacts
 
 We can visualize the artifacts using the `escheR` package. Here, we'll visualize
-the artifacts using the `make_escheR` function and arrange these plots using 
+the artifacts using the `plotQC` function and arrange these plots using 
 `ggpubr::arrange`.
 
 ```{r artifact_visualization}
-plotOutliers(spe,
+plotQC(spe,
     metric = "expr_chrM_ratio",
     outliers = "artifact", point_size = 1.1
 ) +
