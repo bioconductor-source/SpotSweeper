@@ -57,7 +57,36 @@ localVariance <- function(spe, n_neighbors = 36,
                           features = c("expr_chrM_ratio"),
                           samples = "sample_id", log = FALSE, name = NULL) {
 
-    # log2 transform specified features
+    # ===== Validity checks =====
+    # Check if 'spe' is a valid object with required components
+    if (!("SpatialExperiment" %in% class(spe))) {
+      stop("Input data must be a SpatialExperiment object.")
+    }
+
+    # Validate 'features' is a character vector
+    if (!is.character(features)) {
+      stop("'features' must be a character vector.")
+    }
+
+    # validate 'features' are valid colData
+    if (!all(features %in% colnames(colData(spe)))) {
+      stop("All features must be present in colData.")
+    }
+
+    # validate samples is valid colData
+    if (!samples %in% colnames(colData(spe))) {
+      stop("Samples column must be present in colData.")
+    }
+
+    # Check 'n_neighbors' is a positive integer
+    if (!is.numeric(n_neighbors) ||
+        n_neighbors <= 0 ||
+        n_neighbors != round(n_neighbors)) {
+      stop("'n_neighbors' must be a positive integer.")
+    }
+
+    # ===== start function =====
+    # log1p transform specified features
     features_to_use <- character()
     if (log) {
         for (feature in features) {
