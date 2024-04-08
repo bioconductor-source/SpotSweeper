@@ -14,7 +14,7 @@
 #' 'sample_id'.
 #' @param n_rings The number of rings for local mito variance calculation.
 #' Default is 5.
-#' @param log2 Logical, indicating whether to log2 transform specified features.
+#' @param log Logical, indicating whether to log1p transform specified features.
 #' Default is TRUE.
 #' @param name Prefix for the local variance column names. Default is
 #' 'artifact'.
@@ -55,15 +55,15 @@
 findArtifacts <- function(
         spe, mito_percent = "expr_chrM_ratio",
         mito_sum = "expr_chrM", samples = "sample_id", n_rings = 5,
-         log2 = TRUE, name = "artifact", var_output = TRUE) {
-    # log2 transform specified features
+         log = TRUE, name = "artifact", var_output = TRUE) {
+    # log transform specified features
     features <- c(mito_percent, mito_sum)
     features_to_use <- character()
-    if (log2) {
+    if (log) {
         for (feature in features) {
-            feature_log2 <- paste0(feature, "_log2")
-            colData(spe)[feature_log2] <- log2(colData(spe)[[feature]])
-            features_to_use <- c(features_to_use, feature_log2)
+            feature_log <- paste0(feature, "_log")
+            colData(spe)[feature_log] <- log1p(colData(spe)[[feature]])
+            features_to_use <- c(features_to_use, feature_log)
         }
     } else {
         features_to_use <- features

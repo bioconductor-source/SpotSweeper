@@ -55,13 +55,13 @@
 #'
 localVariance <- function(spe, n_neighbors = 36,
                           features = c("expr_chrM_ratio"),
-                          samples = "sample_id", log2 = FALSE, name = NULL) {
+                          samples = "sample_id", log = FALSE, name = NULL) {
 
     # log2 transform specified features
     features_to_use <- character()
-    if (log2) {
+    if (log) {
         for (feature in features) {
-            feature_log2 <- paste0(feature, "_log")
+            feature_log <- paste0(feature, "_log")
             colData(spe)[feature_log] <- log1p(colData(spe)[[feature]])
             features_to_use <- c(features_to_use, feature_log)
         }
