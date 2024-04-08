@@ -50,11 +50,6 @@
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
 #'     )
-#'     
-#' spe2 <- localVariance(spe,
-#'     features = c("subsets_Mito_percent", "total"),
-#'     n_neighbors = 36
-#'     )
 #'
 #' plotOutliers(spe, metric="local_mito_variance_k36")
 #'
@@ -65,160 +60,88 @@ localVariance <- function(spe, n_neighbors = 36,
     # log2 transform specified features
     features_to_use <- character()
     if (log2) {
-      log_mat <- apply(
-        colData(spe)[, features],
-        MARGIN = 2,
-        FUN = log2
-      )
-      colnames(log_mat) <- paste0(colnames(log_mat), "_log2")
-      # for (feature in features) {
-      #     # feature_log2 <- 
-      #     colData(spe)[paste0(feature, "_log2")] <- log2(colData(spe)[[feature]])
-      #     # features_to_use <- c(features_to_use, feature_log2)
-      # }
-      # features_to_use <- paste0(features, "_log2")
-      
-      # Merge to spe
-      colData(spe)[colnames(log_mat)] <- log_mat
-      features_to_use <- colnames(log_mat)
-      
+        for (feature in features) {
+            feature_log2 <- paste0(feature, "_log2")
+            colData(spe)[feature_log2] <- log2(colData(spe)[[feature]])
+            features_to_use <- c(features_to_use, feature_log2)
+        }
     } else {
         features_to_use <- features
     }
 
-    if (!is.null(name)) {
-      stopifnot(
-        "name has different length as feature" = 
-          length(names) == length(features_to_use))
-    } 
-    
     # Get a list of unique sample IDs
     unique_sample_ids <- unique(colData(spe)[[samples]])
 
-    # Initialize a named list equal the length of unique_sample_ids
-    # spaQC_list <- vector("list", length(unique_sample_ids))
-    spaQC_list <- sapply(unique_sample_ids, FUN = function(x) NULL)
+    # Initialize list to store each spaQC dataframe
+    spaQC_list <- vector("list", length(unique_sample_ids))
 
     # Loop through each unique sample ID
-    # NOTE: use for loop to avoid copying any large spe object.
-    # for (sample_id in seq_along(unique_sample_ids)) {
-    for (.sample_id in unique_sample_ids) {
+    for (sample_id in seq_along(unique_sample_ids)) {
         # Subset the data for the current sample
-        # sample <- unique_sample_ids[sample_id]
-        spe_subset <- subset(spe, , sample_id == .sample_id)
+        sample <- unique_sample_ids[sample_id]
+        spe_subset <- subset(spe, , sample_id == sample)
 
         # Create a list of spatial coordinates and qc features
         spaQC <- colData(spe_subset)
-        # NOTE: Doens't seem useful.
-        # spaQC$coords <- spatialCoords(spe_subset)
+        spaQC$coords <- spatialCoords(spe_subset)
 
         # Find nearest neighbors
         dnn <- BiocNeighbors::findKNN(spatialCoords(spe_subset),
             k = n_neighbors,
             warn.ties = FALSE
         )$index
+
         #  === Get local variance ===
         # Initialize a matrix to store variance for each feature
-        # var_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
-        # colnames(var_matrix) <- features_to_use
-        # 
-        # mean_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
-        # colnames(mean_matrix) <- features_to_use
+        var_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
+        colnames(var_matrix) <- features_to_use
 
-        # for (i in seq_len(nrow(dnn))) {
-        #   dnn.idx <- dnn[i, ]
-        #   for (j in seq_along(features_to_use)) {
-        dnn_aug <- cbind(dnn, seq_len(nrow(dnn)))
-        mean_var_mat <- apply(dnn_aug, 1, FUN = function(.idx, spaQC, features_to_use ){
-          neighborhood <- spaQC[.idx, features_to_use, drop=FALSE] |> as.matrix()
-          means_vec <- colMeans(neighborhood, na.rm = TRUE)
-          var_vec <- colVars(neighborhood, na.rm = TRUE)
-          
-          names(means_vec) <- paste0(names(means_vec), "_mean")
-          names(var_vec) <- paste0(names(var_vec), "_var")
-          
-          c(means_vec, var_vec)
-          
-          # [[features_to_use[j]]]
-          # var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
-          # mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
-        # # Loop through each row in the nearest neighbor index matrix
-        # 
-        #         neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
-        # 
-        #         var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
-        #         mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
-        #     }
-        # }
-        },
-        spaQC = spaQC,
-        features_to_use = features_to_use ) |>
-          t() # Transpose to spots-by-features
+        mean_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
+        colnames(mean_matrix) <- features_to_use
+
+        # Loop through each row in the nearest neighbor index matrix
+        for (i in seq_len(nrow(dnn))) {
+            dnn.idx <- dnn[i, ]
+            for (j in seq_along(features_to_use)) {
+                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
+
+                var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
+                mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
+            }
+        }
 
         # Handle non-finite values
-        # var_matrix[!is.finite(var_matrix)] <- 0
-        # mean_matrix[!is.finite(mean_matrix)] <- 0
-        if(any(!is.finite(mean_var_mat))){
-          warning(
-            .sample_id,
-            " contains infinite value in local vars. Forcing to be 0s."
-            )
-          # NOTE to micheal: I'm not sure if this would cause problem....
-          mean_var_mat[!is.finite(mean_var_mat)] <- 0
-        }
-          
+        var_matrix[!is.finite(var_matrix)] <- 0
+        mean_matrix[!is.finite(mean_matrix)] <- 0
+
         # == Regress out mean-variance bias ==
-        # for (feature_idx in seq_along(features_to_use)) {
-        var_matrix <- sapply(
-          features_to_use,
-          FUN = function(feature, mean_var_mat){
-          
+        for (feature_idx in seq_along(features_to_use)) {
             # Prepare data.frame for current feature
-            feat_var <- log2(mean_var_mat[, paste0(feature, "_var")])
-            feat_mean <- log2(mean_var_mat[, paste0(feature, "_mean")])
-            # Prepare data.frame for current feature
-            # mito_var_df <- data.frame(
-            #     mito_var = log2(var_matrix[, feature_idx]),
-            #     mito_mean = log2(mean_matrix[, feature_idx])
-            # )
+            mito_var_df <- data.frame(
+                mito_var = log2(var_matrix[, feature_idx]),
+                mito_mean = log2(mean_matrix[, feature_idx])
+            )
 
             # Perform robust linear regression (IRLS) of variance vs mean
-            # fit.irls <- MASS::rlm(mito_var ~ mito_mean, data = mito_var_df)
-            fit.irls <- MASS::rlm(feat_var ~ feat_mean)
+            fit.irls <- MASS::rlm(mito_var ~ mito_mean, data = mito_var_df)
 
             # Get residuals and update the variance matrix
             resid.irls <- resid(fit.irls)
 
             # Replace original variance values with residuals
-            resid.irls
-        },
-        mean_var_mat = mean_var_mat
-      )
+            var_matrix[, feature_idx] <- resid.irls
+        }
 
         # add local variance to spaQC dataframe
-        # if (!is.null(name)) {
-        #   stopifnot(
-        #     "name has different length as feature" = 
-        #               length(names) == length(features_to_use))
-        #     spaQC[name] <- var_matrix[, j]
-        # } else {
-        #     feature_var <- paste0(features[j], "_var")
-        #     spaQC[feature_var] <- var_matrix[, j]
-        # }
-        
         if (!is.null(name)) {
-          stopifnot(
-            "name has different length as feature" =
-                      length(names) == length(features_to_use))
-          spaQC[name] <- var_matrix
+            spaQC[name] <- var_matrix[, j]
         } else {
-            feature_var <- paste0(features, "_var")
-            colnames(var_matrix) <- feature_var
-            spaQC[feature_var] <- var_matrix
+            feature_var <- paste0(features[j], "_var")
+            spaQC[feature_var] <- var_matrix[, j]
         }
 
         # Store the modified spaQC dataframe in the list
-        spaQC_list[[.sample_id]] <- spaQC
+        spaQC_list[[sample_id]] <- spaQC
     }
 
     # rbind the list of dataframes
