@@ -56,6 +56,31 @@ findArtifacts <- function(
         spe, mito_percent = "expr_chrM_ratio",
         mito_sum = "expr_chrM", samples = "sample_id", n_rings = 5,
          log = TRUE, name = "artifact", var_output = TRUE) {
+
+    # ===== Validity checks =====
+    if (!("SpatialExperiment" %in% class(spe))) {
+      stop("Input data must be a SpatialExperiment object.")
+    }
+
+    if (!all(mito_percent %in% colnames(colData(spe)))) {
+      stop("mito_percent must be present in colData.")
+    }
+
+    if (!mito_sum %in% colnames(colData(spe))) {
+      stop("mito_sum must be present in colData.")
+    }
+
+    if (!samples %in% colnames(colData(spe))) {
+      stop("Samples column must be present in colData.")
+    }
+
+    if (!is.numeric(n_rings) ||
+        n_rings <= 0 ||
+        n_rings != round(n_rings)) {
+      stop("'n_rings' must be a positive integer.")
+    }
+
+
     # log transform specified features
     features <- c(mito_percent, mito_sum)
     features_to_use <- character()
