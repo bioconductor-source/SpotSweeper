@@ -10,7 +10,7 @@ findArtifacts(
   mito_sum = "expr_chrM",
   samples = "sample_id",
   n_rings = 5,
-  log2 = TRUE,
+  log = TRUE,
   name = "artifact",
   var_output = TRUE
 )
@@ -30,7 +30,7 @@ Default is 'expr_chrM'.}
 \item{n_rings}{The number of rings for local mito variance calculation.
 Default is 5.}
 
-\item{log2}{Logical, indicating whether to log2 transform specified features.
+\item{log}{Logical, indicating whether to log1p transform specified features.
 Default is TRUE.}
 
 \item{name}{Prefix for the local variance column names. Default is

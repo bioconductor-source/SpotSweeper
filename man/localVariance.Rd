@@ -9,7 +9,7 @@ localVariance(
   n_neighbors = 36,
   features = c("expr_chrM_ratio"),
   samples = "sample_id",
-  log2 = FALSE,
+  log = FALSE,
   name = NULL
 )
 }
@@ -24,7 +24,7 @@ calculation}
 
 \item{samples}{Column in colData to use for sample ID}
 
-\item{log2}{Whether to log2 transform the features}
+\item{log}{Whether to log1p transform the features}
 
 \item{name}{Name of the new column to add to colData}
 }

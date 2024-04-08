@@ -1,7 +1,7 @@
-#' Plot Outliers for a Single Sample in a SingleCellExperiment
+#' Plot QC metrics for a Single Sample in a SpatialExperiment object
 #'
 #' This function generates a plot for a specified sample within a
-#' SingleCellExperiment object, highlighting outliers based on a specified
+#' SpatialExperiment object, highlighting outliers based on a specified
 #' metric. The plot visualizes the metric of interest and indicates outliers
 #' with a distinct color.
 #'
@@ -36,12 +36,12 @@
 #'
 #'
 #' @examples
-#' plot <- plotOutliers(spe)
+#' plot <- plotQC(spe)
 #' plot
 #'
 #' @export
 
-plotOutliers <- function(
+plotQC <- function(
         spe, sample_id = "sample_id",
         sample = unique(spe$sample_id)[1], metric = "detected",
         outliers = NULL, point_size = 2,
