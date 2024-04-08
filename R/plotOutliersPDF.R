@@ -33,10 +33,10 @@
 #' @importFrom grDevices dev.off pdf
 #'
 #' @examples
-#' plotOutliersPDF(spe, fname = "outliers_visualization.pdf")
+#' plotQCpdf(spe, fname = "outliers_visualization.pdf")
 #'
 #' @export
-plotOutliersPDF <- function(
+plotQCpdf <- function(
         spe, sample_id = "sample_id", metric = "detected",
         outliers = "local_outliers", colors = c("white", "black"), stroke = 1,
         point_size = 2, width = 5, height = 5, fname) {
@@ -46,7 +46,7 @@ plotOutliersPDF <- function(
     # initialize PDF and loop through plots
     pdf(width = width, height = height, fname)
     for (sample in unique_sample_ids) {
-        p <- plotOutliers(spe,
+        p <- plotQC(spe,
             sample_id = sample_id, sample = sample,
             metric = metric, outliers = outliers, colors = colors,
             stroke = stroke, point_size = point_size
