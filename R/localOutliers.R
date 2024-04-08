@@ -72,14 +72,39 @@ localOutliers <- function(
         spe, metric = "detected",
         direction = "lower", n_neighbors = 36, samples = "sample_id",
         log = TRUE, cutoff = 3) {
-    # log transform specified metric
-    if (log) {
-        metric_log <- paste0(metric, "_log")
-        colData(spe)[metric_log] <- log1p(colData(spe)[[metric]])
-        metric_to_use <- metric_log
-    } else {
-        metric_to_use <- metric
-    }
+
+  # ===== Validity checks =====
+  # Check if 'spe' is a valid object with required components
+  if (!("SpatialExperiment" %in% class(spe))) {
+    stop("Input data must be a SpatialExperiment object.")
+  }
+
+  # Validate 'direction'
+  if (!direction %in% c("lower", "higher", "both")) {
+    stop("'direction' must be one of 'lower', 'higher', or 'both'.")
+  }
+
+  # Check 'n_neighbors' is a positive integer
+  if (!is.numeric(n_neighbors) ||
+      n_neighbors <= 0 ||
+      n_neighbors != round(n_neighbors)) {
+    stop("'n_neighbors' must be a positive integer.")
+  }
+
+  # Check 'cutoff' is a numeric value
+  if (!is.numeric(cutoff)) {
+    stop("'cutoff' must be a numeric value.")
+  }
+
+  # ===== Start function =====
+  # log transform specified metric
+  if (log) {
+      metric_log <- paste0(metric, "_log")
+      colData(spe)[metric_log] <- log1p(colData(spe)[[metric]])
+      metric_to_use <- metric_log
+  } else {
+      metric_to_use <- metric
+  }
 
   # Get a list of unique sample IDs
   unique_sample_ids <- unique(colData(spe)[[samples]])
