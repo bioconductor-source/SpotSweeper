@@ -39,6 +39,7 @@ This function does calculates the local variance based on kNN.
 # for more details see extended example in vignettes
 library(SpotSweeper)
 library(SpatialExperiment)
+library(escheR)
 
 # load example data
 spe <- STexampleData::Visium_humanDLPFC()
