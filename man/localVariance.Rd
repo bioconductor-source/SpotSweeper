@@ -66,6 +66,6 @@ spe <- localVariance(spe,
     name = "local_mito_variance_k36"
     )
 
-plotOutliers(spe, metric="local_mito_variance_k36")
+plotQC(spe, metric="local_mito_variance_k36")
 
 }

@@ -51,7 +51,7 @@
 #'     name = "local_mito_variance_k36"
 #'     )
 #'
-#' plotOutliers(spe, metric="local_mito_variance_k36")
+#' plotQC(spe, metric="local_mito_variance_k36")
 #'
 localVariance <- function(spe, n_neighbors = 36,
                           features = c("expr_chrM_ratio"),

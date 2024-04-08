@@ -147,7 +147,7 @@ spe$local_outliers <- as.logical(spe$sum_outliers) |
 
 ### Visualizing local outliers
 
-We can visualize the local outliers using the `plotOutliers` function. This 
+We can visualize the local outliers using the `plotQC` function. This 
 function creates a scatter plot of the specified metric and highlights the 
 local outliers in red using the `escheR` package. Here, we'll visualize local 
 outliers of library size, unique genes, mitochondrial percent, and finally, all
