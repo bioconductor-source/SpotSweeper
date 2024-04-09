@@ -33,7 +33,27 @@
 #' @importFrom grDevices dev.off pdf
 #'
 #' @examples
-#' plotQCpdf(spe, fname = "outliers_visualization.pdf")
+#' library(SpotSweeper)
+#' library(SpatialExperiment)
+#' library(escheR)
+#'
+#' tempFilePath <- file.path(tempdir(), "examplePlot.pdf")
+#'
+#' data(DLPFC_artifact)
+#' spe <- DLPFC_artifact
+#'
+#' # find artifacts
+#' spe <- findArtifacts(spe,
+#'     mito_percent = "expr_chrM_ratio",
+#'     mito_sum = "expr_chrM",
+#'     n_rings = 5,
+#'     name = "artifact"
+#' )
+#'
+#' plotQCpdf(spe,
+#'           metric="expr_chrM_ratio",
+#'           outliers="artifact",
+#'           fname=tempFilePath)
 #'
 #' @export
 plotQCpdf <- function(
