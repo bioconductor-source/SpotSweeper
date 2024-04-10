@@ -30,7 +30,7 @@ Default is 'expr_chrM'.}
 \item{n_rings}{The number of rings for local mito variance calculation.
 Default is 5.}
 
-\item{log}{Logical, indicating whether to log1p transform specified features.
+\item{log}{Logical, indicating whether to log1p transform mito_percent.
 Default is TRUE.}
 
 \item{name}{Prefix for the local variance column names. Default is

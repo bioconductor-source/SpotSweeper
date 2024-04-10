@@ -14,7 +14,7 @@
 #' 'sample_id'.
 #' @param n_rings The number of rings for local mito variance calculation.
 #' Default is 5.
-#' @param log Logical, indicating whether to log1p transform specified features.
+#' @param log Logical, indicating whether to log1p transform mito_percent.
 #' Default is TRUE.
 #' @param name Prefix for the local variance column names. Default is
 #' 'artifact'.
@@ -101,7 +101,8 @@ findArtifacts <- function(
           spe.temp <<- localVariance(spe.temp,
                                     metric = mito_percent,
                                     n_neighbors = n_neighbors,
-                                    name = tmp.name)
+                                    name = tmp.name,
+                                    log=log)
 
           # Extract and return the column corresponding to tmp.name from colData
           colData(spe.temp)[[tmp.name]]

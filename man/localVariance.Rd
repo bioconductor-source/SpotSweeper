@@ -7,7 +7,7 @@
 localVariance(
   spe,
   n_neighbors = 36,
-  features = c("expr_chrM_ratio"),
+  metric = c("expr_chrM_ratio"),
   samples = "sample_id",
   log = FALSE,
   name = NULL
@@ -20,16 +20,16 @@ sample_id, sum_umi, sum_gene}
 \item{n_neighbors}{Number of nearest neighbors to use for variance
 calculation}
 
-\item{features}{Features to use for variance calculation}
+\item{metric}{metric to use for variance calculation}
 
 \item{samples}{Column in colData to use for sample ID}
 
-\item{log}{Whether to log1p transform the features}
+\item{log}{Whether to log1p transform the metric}
 
 \item{name}{Name of the new column to add to colData}
 }
 \value{
-SpatialExperiment object with feature variance added to colData
+SpatialExperiment object with metric variance added to colData
 }
 \description{
 This function does calculates the local variance based on kNN.
@@ -57,12 +57,12 @@ spe <- spe[, !is.na(spe$ground_truth)]
 # Identifying the mitochondrial transcripts in our SpatialExperiment.
 is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 
-# Calculating QC metrics for each spot using scuttle
+# Calculating QC metric for each spot using scuttle
 spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 colnames(colData(spe))
 
 spe <- localVariance(spe,
-    features = "subsets_Mito_percent",
+    metric = "subsets_Mito_percent",
     n_neighbors = 36,
     name = "local_mito_variance_k36"
     )
