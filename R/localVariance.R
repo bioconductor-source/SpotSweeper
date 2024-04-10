@@ -103,8 +103,8 @@ localVariance <- function(spe, n_neighbors = 36,
     # Get a list of unique sample IDs
     unique_sample_ids <- unique(colData(spe)[[samples]])
 
-    # Initialize list to store each spaQC dataframe
-    spaQC_list <- vector("list", length(unique_sample_ids))
+    # Initialize list to store each columnData dataframe
+    columnData_list <- sapply(unique_sample_ids, FUN = function(x) NULL)
 
     # Loop through each unique sample ID
     for (sample_id in seq_along(unique_sample_ids)) {
@@ -113,8 +113,8 @@ localVariance <- function(spe, n_neighbors = 36,
         spe_subset <- subset(spe, , sample_id == sample)
 
         # Create a list of spatial coordinates and qc features
-        spaQC <- colData(spe_subset)
-        spaQC$coords <- spatialCoords(spe_subset)
+        columnData <- colData(spe_subset)
+        columnData$coords <- spatialCoords(spe_subset)
 
         # Find nearest neighbors
         dnn <- BiocNeighbors::findKNN(spatialCoords(spe_subset),
@@ -124,17 +124,17 @@ localVariance <- function(spe, n_neighbors = 36,
 
         #  === Get local variance ===
         # Initialize a matrix to store variance for each feature
-        var_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
+        var_matrix <- matrix(NA, nrow(columnData), length(features_to_use))
         colnames(var_matrix) <- features_to_use
 
-        mean_matrix <- matrix(NA, nrow(spaQC), length(features_to_use))
+        mean_matrix <- matrix(NA, nrow(columnData), length(features_to_use))
         colnames(mean_matrix) <- features_to_use
 
         # Loop through each row in the nearest neighbor index matrix
         for (i in seq_len(nrow(dnn))) {
             dnn.idx <- dnn[i, ]
             for (j in seq_along(features_to_use)) {
-                neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
+                neighborhood <- columnData[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
 
                 var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
                 mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
@@ -163,23 +163,23 @@ localVariance <- function(spe, n_neighbors = 36,
             var_matrix[, feature_idx] <- resid.irls
         }
 
-        # add local variance to spaQC dataframe
+        # add local variance to columnData dataframe
         if (!is.null(name)) {
-            spaQC[name] <- var_matrix[, j]
+            columnData[name] <- var_matrix[, j]
         } else {
             feature_var <- paste0(features[j], "_var")
-            spaQC[feature_var] <- var_matrix[, j]
+            columnData[feature_var] <- var_matrix[, j]
         }
 
-        # Store the modified spaQC dataframe in the list
-        spaQC_list[[sample_id]] <- spaQC
+        # Store the modified columnData dataframe in the list
+        columnData_list[[sample_id]] <- columnData
     }
 
     # rbind the list of dataframes
-    spaQC_aggregated <- do.call(rbind, spaQC_list)
+    columnData_aggregated <- do.call(rbind, columnData_list)
 
     # replace SPE column data with aggregated data
-    colData(spe) <- spaQC_aggregated
+    colData(spe) <- columnData_aggregated
 
     return(spe)
 }
