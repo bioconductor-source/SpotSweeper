@@ -49,7 +49,6 @@
 #'     name = "artifact"
 #' )
 #'
-#' plotQC(spe, metric="expr_chrM_ratio", outliers="artifact")
 #'
 #' @export
 findArtifacts <- function(

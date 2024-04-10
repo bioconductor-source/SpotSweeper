@@ -37,22 +37,33 @@
 #' library(SpatialExperiment)
 #' library(escheR)
 #'
-#' tempFilePath <- file.path(tempdir(), "examplePlot.pdf")
+#' # load example data
+#' spe <- STexampleData::Visium_humanDLPFC()
 #'
-#' data(DLPFC_artifact)
-#' spe <- DLPFC_artifact
+#' # change from gene id to gene names
+#' rownames(spe) <- rowData(spe)$gene_name
 #'
-#' # find artifacts
-#' spe <- findArtifacts(spe,
-#'     mito_percent = "expr_chrM_ratio",
-#'     mito_sum = "expr_chrM",
-#'     n_rings = 5,
-#'     name = "artifact"
+#' # drop out-of-tissue spots
+#' spe <- spe[, spe$in_tissue == 1]
+#' spe <- spe[, !is.na(spe$ground_truth)]
+#'
+#' # Identifying the mitochondrial transcripts in our SpatialExperiment.
+#' is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
+#'
+#' # Calculating QC metrics for each spot using scuttle
+#' spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
+#' colnames(colData(spe))
+#'
+#' # Identifying local outliers using SpotSweeper
+#' spe <- localOutliers(spe,
+#'                      metric = "sum",
+#'                      direction = "lower",
+#'                      log = TRUE
 #' )
 #'
 #' plotQCpdf(spe,
-#'           metric="expr_chrM_ratio",
-#'           outliers="artifact",
+#'           metric="sum",
+#'           outliers="sum_outliers",
 #'           fname=tempFilePath)
 #'
 #' @export

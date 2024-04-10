@@ -65,7 +65,6 @@ spe <- findArtifacts(spe,
     name = "artifact"
 )
 
-plotQC(spe, metric="expr_chrM_ratio", outliers="artifact")
 
 }
 \seealso{

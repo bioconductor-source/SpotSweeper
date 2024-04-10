@@ -51,23 +51,6 @@
 #'                      log = TRUE
 #' )
 #'
-#' spe <- localOutliers(spe,
-#'                      metric = "detected",
-#'                      direction = "lower",
-#'                      log = TRUE
-#' )
-#'
-#' spe <- localOutliers(spe,
-#'                      metric = "subsets_Mito_percent",
-#'                      direction = "higher",
-#'                      log = FALSE
-#' )
-#'
-#' # combine all outliers into "local_outliers" column
-#' spe$local_outliers <- as.logical(spe$sum_outliers) |
-#'   as.logical(spe$detected_outliers) |
-#'   as.logical(spe$subsets_Mito_percent_outliers)
-#'
 localOutliers <- function(
         spe, metric = "detected",
         direction = "lower", n_neighbors = 36, samples = "sample_id",
