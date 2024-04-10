@@ -136,9 +136,9 @@ localOutliers <- function(
     })
 
     # Compute modified-z and return the middle spot
-    mod_z_matrix <- sapply(neighborhoods, function(x) {
+    mod_z_matrix <- vapply(neighborhoods, function(x) {
       spatialEco::outliers(x)[1]
-    })
+    }, numeric(1))
 
     # find outliers based on cutoff, store in colData
     metric_outliers <- paste0(metric, "_outliers")
