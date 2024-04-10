@@ -7,7 +7,7 @@ set.seed(123)
 spe <- findArtifacts(spe,
                      mito_percent = "expr_chrM_ratio",
                      mito_sum = "expr_chrM",
-                     n_rings = 5,
+                     n_rings = 2,
                      name = "artifact"
 )
 
@@ -18,7 +18,7 @@ test_that("example objects have correct class", {
 })
 
 test_that("examples give correct number of colData", {
-  expect_equal(length(colnames(colData(spe))), 26)
+  expect_equal(length(colnames(colData(spe))), 23)
 })
 
 

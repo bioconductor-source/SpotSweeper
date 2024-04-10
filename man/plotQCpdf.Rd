@@ -66,6 +66,8 @@ library(escheR)
 # load example data
 spe <- STexampleData::Visium_humanDLPFC()
 
+tempFilePath <- file.path(tempdir(), "examplePlot.pdf")
+
 # change from gene id to gene names
 rownames(spe) <- rowData(spe)$gene_name
 

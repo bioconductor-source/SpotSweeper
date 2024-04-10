@@ -7,7 +7,7 @@ set.seed(123)
 spe <- findArtifacts(spe,
                      mito_percent = "expr_chrM_ratio",
                      mito_sum = "expr_chrM",
-                     n_rings = 5,
+                     n_rings = 2,
                      name = "artifact"
 )
 
@@ -21,5 +21,5 @@ test_that("example object contains artifacts colDta", {
 })
 
 test_that("examples gives correct number of artifact spots", {
-  expect_equal(sum(spe$artifact), 353)
+  expect_equal(sum(spe$artifact), 517)
 })

@@ -45,7 +45,7 @@
 #' spe <- findArtifacts(spe,
 #'     mito_percent = "expr_chrM_ratio",
 #'     mito_sum = "expr_chrM",
-#'     n_rings = 5,
+#'     n_rings = 2, # 5 recommended, using 1 for time
 #'     name = "artifact"
 #' )
 #'
