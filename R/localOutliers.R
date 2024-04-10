@@ -110,7 +110,7 @@ localOutliers <- function(
   unique_sample_ids <- unique(colData(spe)[[samples]])
 
   # Initialize list to store each spaQC dataframe
-  spaQC_list <- vector("list", length(unique_sample_ids))
+  spaQC_list <- sapply(unique_sample_ids, FUN = function(x) NULL)
 
   # Loop through each unique sample ID
   for (sample in unique_sample_ids) {
@@ -126,36 +126,40 @@ localOutliers <- function(
                                   k = n_neighbors, warn.ties = FALSE
     )$index
 
-    # Initialize a matrix to store z-scores
-    mod_z_matrix <- array(NA, nrow(dnn))
+    # get neighborhood metrics
+    neighborhoods <- lapply(seq_len(nrow(dnn)), function(i) {
+      indices <- dnn[i, ]
+      indices <- indices[indices != 0]
+      indices <- c(i, indices)
 
-    # Loop through each row in the nearest neighbor index matrix
-    for (i in seq_len(nrow(dnn))) {
-      dnn.idx <- dnn[i, ]
-      neighborhood <- spaQC[c(i, dnn.idx[dnn.idx != 0]), ][[metric_to_use]]
+      # Extract the desired metric for neighborhoods
+      spaQC[indices, metric_to_use]
+    })
 
-      # modified z-score
-      mod_z_matrix[i] <- spatialEco::outliers(neighborhood)[1]
-    }
+    # Compute modified-z and return the middle spot
+    mod_z_matrix <- sapply(neighborhoods, function(x) {
+      spatialEco::outliers(x)[1]
+    })
+
 
     # find outliers based on cutoff, store in colData
     metric_outliers <- paste0(metric, "_outliers")
     spaQC[metric_outliers] <- switch(direction,
-                                     higher = as.factor(apply(
+                                     higher = sapply(
                                        mod_z_matrix,
-                                       1, function(x) x > cutoff
-                                     )),
-                                     lower = as.factor(apply(
+                                       function(x) x > cutoff
+                                     ),
+                                     lower = sapply(
                                        mod_z_matrix,
-                                       1, function(x) x < -cutoff
-                                     )),
-                                     both = as.factor(apply(
+                                       function(x) x < -cutoff
+                                     ),
+                                     both = sapply(
                                        mod_z_matrix,
-                                       1, function(x) {
+                                       function(x) {
                                          x > cutoff | x <
                                            -cutoff
                                        }
-                                     ))
+                                     )
     )
 
     # add z-scores to colData
