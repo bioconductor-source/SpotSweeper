@@ -92,7 +92,7 @@ findArtifacts <- function(
 
         # ======= Calculate local mito variance ========
         # Use vapply to iterate over rings_seq
-        var_matrix <- sapply(seq_len(n_rings), function(i) {
+        var_matrix <- vapply(seq_len(n_rings), function(i) {
           # Calculate n_neighbors for the current ring
           n_neighbors <- 3 * i * (i + 1)
           tmp.name <- paste0("k", n_neighbors)
@@ -106,7 +106,7 @@ findArtifacts <- function(
 
           # Extract and return the column corresponding to tmp.name from colData
           colData(spe.temp)[[tmp.name]]
-        })
+        }, numeric(length(spe.temp[[1]])))
 
 
         # ========== PCA and clustering ==========
