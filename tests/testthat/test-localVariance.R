@@ -18,7 +18,7 @@ test_that("example objects have correct class", {
 })
 
 test_that("examples give correct number of colData", {
-  expect_equal(length(colnames(colData(spe))), 28)
+  expect_equal(length(colnames(colData(spe))), 26)
 })
 
 
