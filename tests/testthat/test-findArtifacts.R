@@ -21,5 +21,5 @@ test_that("example object contains artifacts colDta", {
 })
 
 test_that("examples gives correct number of artifact spots", {
-  expect_equal(sum(spe$artifact), 349)
+  expect_equal(sum(spe$artifact), 355)
 })

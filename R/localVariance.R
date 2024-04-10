@@ -6,12 +6,12 @@
 #'        sample_id, sum_umi, sum_gene
 #' @param n_neighbors Number of nearest neighbors to use for variance
 #'        calculation
-#' @param features Features to use for variance calculation
+#' @param metric metric to use for variance calculation
 #' @param samples Column in colData to use for sample ID
-#' @param log Whether to log1p transform the features
+#' @param log Whether to log1p transform the metric
 #' @param name Name of the new column to add to colData
 #'
-#' @return SpatialExperiment object with feature variance added to colData
+#' @return SpatialExperiment object with metric variance added to colData
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom BiocNeighbors findKNN
@@ -42,12 +42,12 @@
 #' # Identifying the mitochondrial transcripts in our SpatialExperiment.
 #' is.mito <- rownames(spe)[grepl("^MT-", rownames(spe))]
 #'
-#' # Calculating QC metrics for each spot using scuttle
+#' # Calculating QC metric for each spot using scuttle
 #' spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(Mito = is.mito))
 #' colnames(colData(spe))
 #'
 #' spe <- localVariance(spe,
-#'     features = "subsets_Mito_percent",
+#'     metric = "subsets_Mito_percent",
 #'     n_neighbors = 36,
 #'     name = "local_mito_variance_k36"
 #'     )
@@ -55,7 +55,7 @@
 #' plotQC(spe, metric="local_mito_variance_k36")
 #'
 localVariance <- function(spe, n_neighbors = 36,
-                          features = c("expr_chrM_ratio"),
+                          metric = c("expr_chrM_ratio"),
                           samples = "sample_id", log = FALSE, name = NULL) {
 
     # ===== Validity checks =====
@@ -64,14 +64,14 @@ localVariance <- function(spe, n_neighbors = 36,
       stop("Input data must be a SpatialExperiment object.")
     }
 
-    # Validate 'features' is a character vector
-    if (!is.character(features)) {
-      stop("'features' must be a character vector.")
+    # Validate 'metric' is a character vector
+    if (!is.character(metric)) {
+      stop("'metric' must be a character vector.")
     }
 
-    # validate 'features' are valid colData
-    if (!all(features %in% colnames(colData(spe)))) {
-      stop("All features must be present in colData.")
+    # validate 'metric' are valid colData
+    if (!all(metric %in% colnames(colData(spe)))) {
+      stop("Metric must be present in colData.")
     }
 
     # validate samples is valid colData
@@ -87,17 +87,13 @@ localVariance <- function(spe, n_neighbors = 36,
     }
 
     # ===== start function =====
-    # log1p transform specified features
+    # log1p transform specified metric
     if (log) {
-      features_log <- lapply(features, function(feature) {
-        feature_log <- paste0(feature, "_log")
-        colData(spe)[[feature_log]] <- log1p(colData(spe)[[feature]])
-        return(feature_log)  # Return the new feature name
-      })
-
-      features_to_use <- c(features, unlist(features_log))
+      metric_log <- paste0(metric, "_log")
+      colData(spe)[metric_log] <- log1p(colData(spe)[[metric]])
+      metric_to_use <- metric_log
     } else {
-      features_to_use <- features
+      metric_to_use <- metric
     }
 
     # Get a list of unique sample IDs
@@ -112,7 +108,7 @@ localVariance <- function(spe, n_neighbors = 36,
         sample <- unique_sample_ids[sample_id]
         spe_subset <- subset(spe, , sample_id == sample)
 
-        # Create a list of spatial coordinates and qc features
+        # Create a list of spatial coordinates and qc metric
         columnData <- colData(spe_subset)
         columnData$coords <- spatialCoords(spe_subset)
 
@@ -122,53 +118,33 @@ localVariance <- function(spe, n_neighbors = 36,
             warn.ties = FALSE
         )$index
 
-        #  === Get local variance ===
-        # Initialize a matrix to store variance for each feature
-        var_matrix <- matrix(NA, nrow(columnData), length(features_to_use))
-        colnames(var_matrix) <- features_to_use
+        #  === Compute local variance ===
+        # get neighborhood metric
+        neighborhoods <- lapply(seq_len(nrow(dnn)), function(i) {
+          indices <- dnn[i, ]
+          indices <- indices[indices != 0]
+          indices <- c(i, indices)
 
-        mean_matrix <- matrix(NA, nrow(columnData), length(features_to_use))
-        colnames(mean_matrix) <- features_to_use
+          columnData[indices, metric_to_use]
+        })
 
-        # Loop through each row in the nearest neighbor index matrix
-        for (i in seq_len(nrow(dnn))) {
-            dnn.idx <- dnn[i, ]
-            for (j in seq_along(features_to_use)) {
-                neighborhood <- columnData[c(i, dnn.idx[dnn.idx != 0]), ][[features_to_use[j]]]
+        # Compute variance and mean
+        stats_matrix <- t(sapply(neighborhoods, function(x) {
+          c(var = var(x, na.rm = TRUE), mean = mean(x, na.rm = TRUE))
+        }))
 
-                var_matrix[i, j] <- var(neighborhood, na.rm = TRUE)[1]
-                mean_matrix[i, j] <- mean(neighborhood, na.rm = TRUE)[1]
-            }
-        }
+        # Perform robust linear regression to regress out mean-var bias
+        fit.irls <- MASS::rlm(log2(var) ~ mean,
+                              data = as.data.frame(stats_matrix))
 
-        # Handle non-finite values
-        var_matrix[!is.finite(var_matrix)] <- 0
-        mean_matrix[!is.finite(mean_matrix)] <- 0
-
-        # == Regress out mean-variance bias ==
-        for (feature_idx in seq_along(features_to_use)) {
-            # Prepare data.frame for current feature
-            mito_var_df <- data.frame(
-                mito_var = log2(var_matrix[, feature_idx]),
-                mito_mean = log2(mean_matrix[, feature_idx])
-            )
-
-            # Perform robust linear regression (IRLS) of variance vs mean
-            fit.irls <- MASS::rlm(mito_var ~ mito_mean, data = mito_var_df)
-
-            # Get residuals and update the variance matrix
-            resid.irls <- resid(fit.irls)
-
-            # Replace original variance values with residuals
-            var_matrix[, feature_idx] <- resid.irls
-        }
+        var_resid <- resid(fit.irls) # Get residuals
 
         # add local variance to columnData dataframe
         if (!is.null(name)) {
-            columnData[name] <- var_matrix[, j]
+            columnData[name] <- var_resid
         } else {
-            feature_var <- paste0(features[j], "_var")
-            columnData[feature_var] <- var_matrix[, j]
+            metric_var <- paste0(metric, "_var")
+            columnData[metric_var] <- var_resid
         }
 
         # Store the modified columnData dataframe in the list

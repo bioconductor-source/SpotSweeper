@@ -80,53 +80,38 @@ findArtifacts <- function(
       stop("'n_rings' must be a positive integer.")
     }
 
-
-    # log transform specified features
-    features <- c(mito_percent, mito_sum)
-    features_to_use <- character()
-    if (log) {
-        for (feature in features) {
-            feature_log <- paste0(feature, "_log")
-            colData(spe)[feature_log] <- log1p(colData(spe)[[feature]])
-            features_to_use <- c(features_to_use, feature_log)
-        }
-    } else {
-        features_to_use <- features
-    }
-
     # get unique sample IDs
-    sample_ids <- unique(colData(spe)[[samples]])
+    unique_sample_ids <- unique(colData(spe)[[samples]])
 
     # Initialize a list to store spe for each sample
-    colData_list <- list()
+    columnData_list <- sapply(unique_sample_ids, FUN = function(x) NULL)
 
-    for (sample in sample_ids) {
+    for (sample in unique_sample_ids) {
         # subset by sample
         spe.temp <- spe[, colData(spe)[[samples]] == sample]
 
         # ======= Calculate local mito variance ========
-        var_matrix <- c()
-        for (i in seq_len(n_rings)) {
-            # ==== local mito variance ==== get n neighbors for i rings
-            n_neighbors <- 3 * i * (i + 1)
-            tmp.name <- paste0("k", n_neighbors)
+        # Use vapply to iterate over rings_seq
+        var_matrix <- sapply(seq_len(n_rings), function(i) {
+          # Calculate n_neighbors for the current ring
+          n_neighbors <- 3 * i * (i + 1)
+          tmp.name <- paste0("k", n_neighbors)
 
-            # get local variance of mito ratio
-            spe.temp <- localVariance(spe.temp,
-                features = mito_percent,
-                n_neighbors = n_neighbors,
-                name = tmp.name
-            )
+          # Apply local variance calculation
+          spe.temp <<- localVariance(spe.temp,
+                                    metric = mito_percent,
+                                    n_neighbors = n_neighbors,
+                                    name = tmp.name)
 
-            # add to var_matrix
-            var_matrix <- cbind(var_matrix, colData(spe.temp)[[tmp.name]])
-        }
+          # Extract and return the column corresponding to tmp.name from colData
+          colData(spe.temp)[[tmp.name]]
+        })
 
 
-        # ========== PCA and clustering ========== add mito and mito_percent to
-        # var dataframe
+        # ========== PCA and clustering ==========
         var_matrix <- cbind(
-            var_matrix, colData(spe.temp)[[mito_percent]],
+            var_matrix,
+            colData(spe.temp)[[mito_percent]],
             colData(spe.temp)[[mito_sum]]
         )
 
@@ -134,6 +119,7 @@ findArtifacts <- function(
 
         # Run PCA and add to reduced dims
         pc <- prcomp(var_df, center = TRUE, scale. = TRUE)
+        rownames(pc$x) <- colnames(spe.temp) # assign rownames to avoid error
         reducedDim(spe.temp, "PCA_artifacts") <- pc$x
 
         # Cluster using kmeans and add to temp sce
@@ -143,13 +129,9 @@ findArtifacts <- function(
         # =========== Artifact annotation ===========
 
         # calculate average local variance of the two clusters
-        clus1_mean <- mean(colData(spe.temp)[[paste0(
-            "k",
-            18
+        clus1_mean <- mean(colData(spe.temp)[[paste0("k",18
         )]][spe.temp$Kmeans == 1])
-        clus2_mean <- mean(colData(spe.temp)[[paste0(
-            "k",
-            18
+        clus2_mean <- mean(colData(spe.temp)[[paste0("k",18
         )]][spe.temp$Kmeans == 2])
 
         artifact_clus <- which.min(c(clus1_mean, clus2_mean))
@@ -158,16 +140,18 @@ findArtifacts <- function(
         # 1 to 'TRUE'
         spe.temp$artifact <- FALSE
         spe.temp$artifact[spe.temp$Kmeans == artifact_clus] <- TRUE
+        spe.temp$Kmeans <- NULL
 
         # add to sample list
-        colData_list[[sample]] <- colData(spe.temp)
+        columnData_list[[sample]] <- colData(spe.temp)
     }
 
     # rbind the list of dataframes
-    colData_aggregated <- do.call(rbind, colData_list)
+    columnData_aggregated <- do.call(rbind, columnData_list)
 
     # replace SPE column data with aggregated data
-    colData(spe) <- colData_aggregated
+    colData(spe) <- columnData_aggregated
+    reducedDims(spe) <- reducedDims(spe.temp)
 
     # return sce
     return(spe)
