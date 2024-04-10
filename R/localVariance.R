@@ -88,15 +88,16 @@ localVariance <- function(spe, n_neighbors = 36,
 
     # ===== start function =====
     # log1p transform specified features
-    features_to_use <- character()
     if (log) {
-        for (feature in features) {
-            feature_log <- paste0(feature, "_log")
-            colData(spe)[feature_log] <- log1p(colData(spe)[[feature]])
-            features_to_use <- c(features_to_use, feature_log)
-        }
+      features_log <- lapply(features, function(feature) {
+        feature_log <- paste0(feature, "_log")
+        colData(spe)[[feature_log]] <- log1p(colData(spe)[[feature]])
+        return(feature_log)  # Return the new feature name
+      })
+
+      features_to_use <- c(features, unlist(features_log))
     } else {
-        features_to_use <- features
+      features_to_use <- features
     }
 
     # Get a list of unique sample IDs
