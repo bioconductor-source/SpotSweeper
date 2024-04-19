@@ -123,6 +123,9 @@ localOutliers <- function(
       spatialEco::outliers(x)[1]
     }, numeric(1))
 
+    # Handle non-finite values
+    mod_z_matrix[!is.finite(mod_z_matrix)] <- 0
+
     # find outliers based on cutoff, store in colData
     metric_outliers <- paste0(metric, "_outliers")
     columnData[metric_outliers] <- switch(direction,

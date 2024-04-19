@@ -133,6 +133,9 @@ localVariance <- function(spe, n_neighbors = 36,
           c(var = var(x, na.rm = TRUE), mean = mean(x, na.rm = TRUE))
         }))
 
+        # Handle non-finite values
+        stats_matrix[!is.finite(stats_matrix)] <- 0
+
         # Perform robust linear regression to regress out mean-var bias
         fit.irls <- MASS::rlm(log2(var) ~ mean,
                               data = as.data.frame(stats_matrix))
