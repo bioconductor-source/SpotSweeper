@@ -7,7 +7,6 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml/badge.svg)](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml)
 [![codecov](https://codecov.io/gh/MicTott/SpotSweeper/graph/badge.svg?token=M1MUJN7VS6)](https://codecov.io/gh/MicTott/SpotSweeper)
 <!-- badges: end -->
 
@@ -29,17 +28,8 @@ website](http://MicTott.github.io/SpotSweeper).
 
 ## Installation instructions
 
-Currently, the only way to install `SpotSweeper` is by downloading the
-development version which can be installed from
-[GitHub](https://github.com/MicTott/SpotSweeper) using the following:
-
-``` r
-if (!require("devtools")) install.packages("devtools")
-remotes::install_github("MicTott/SpotSweeper")
-```
-
-Once accepted in [Bioconductor](http://bioconductor.org/), `SpotSweeper`
-will be installable using:
+You can install the latest version of `SpotSweeper` from Bioconductor
+with the following code:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -47,6 +37,14 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 
 BiocManager::install("SpotSweeper")
+```
+
+The latest development version can be installed from
+[GitHub](https://github.com/MicTott/SpotSweeper) using the following:
+
+``` r
+if (!require("devtools")) install.packages("devtools")
+remotes::install_github("MicTott/SpotSweeper")
 ```
 
 ## Input data format

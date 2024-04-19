@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml/badge.svg)](https://github.com/MicTott/SpotSweeper/actions/workflows/bioc-check.yaml)
 [![codecov](https://codecov.io/gh/MicTott/SpotSweeper/graph/badge.svg?token=M1MUJN7VS6)](https://codecov.io/gh/MicTott/SpotSweeper)
 <!-- badges: end -->
 
@@ -34,15 +33,7 @@ knitr::include_graphics("./man/figures/schematic.png")
 
 ## Installation instructions
 
-Currently, the only way to install `SpotSweeper` is by downloading the development version which can be installed from [GitHub](https://github.com/MicTott/SpotSweeper) using the following: 
-
-```{r 'install_dev', eval = FALSE}
-if (!require("devtools")) install.packages("devtools")
-remotes::install_github("MicTott/SpotSweeper")
-```
-
-Once accepted in [Bioconductor](http://bioconductor.org/), `SpotSweeper` will be installable using:
-
+You can install the latest version of `SpotSweeper` from Bioconductor with the following code: 
 ```{r 'install', eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
@@ -51,6 +42,12 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("SpotSweeper")
 ```
 
+The latest development version can be installed from [GitHub](https://github.com/MicTott/SpotSweeper) using the following: 
+
+```{r 'install_dev', eval = FALSE}
+if (!require("devtools")) install.packages("devtools")
+remotes::install_github("MicTott/SpotSweeper")
+```
 
 ## Input data format
 In the examples below, we assume the input data are provided as a [SpatialExperiment](https://github.com/drighelli/SpatialExperiment) (SPE) object. The outputs for spot-level outliers and artifacts are stored in the `colData` of the SPE object.
